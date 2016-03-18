@@ -31,6 +31,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+use OSPN\OSPN_Admin;
+
+if (!defined('WPINC')) {
+	die;
+}
+
 if (is_admin()) {
-	require_once(dirname(__FILE__) . '/admin/ospn-admin.php');
+    require_once('vendor/autoload.php');
+    $plugin = new OSPN_Admin();
+
+    register_activation_hook(__FILE__, array($plugin, 'activate'));
+    register_deactivation_hook(__FILE__, array($plugin, 'deactivate'));
+
+    add_action('plugins_loaded', array($plugin, 'loaded'));
+    add_action('admin_menu', array($plugin, 'install_menu'));
 };

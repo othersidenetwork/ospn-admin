@@ -21,26 +21,25 @@ class OSPN_Members_List_Table extends WP_List_Table
         return $columns;
     }
 
-    function usort_reorder($a, $b)
-    {
-        // If no sort, default to name
-        $orderby = (!empty($_GET['orderby'])) ? $_GET['orderby'] : 'name';
-        // If no order, default to asc
-        $order = (!empty($_GET['order'])) ? $_GET['order'] : 'asc';
-        // Determine sort order
-        $result = strcmp($a[$orderby], $b[$orderby]);
-        // Send final sort direction to usort
-        return ($order == 'asc') ? $result : -$result;
-    }
-
     function prepare_items()
     {
+        $query = new OSPN_Member_Query();
+        $results = $query->get_results();
+        $per_page = $this->get_items_per_page('members_per_page', 5);
+        $current_page = $this->get_pagenum();
+        $total_items = count($results);
+        $found_data = array_slice($results, (($current_page - 1) * $per_page), $per_page);
+        $this->set_pagination_args(array(
+            'total_items' => $total_items,
+            'per_page' => $per_page
+        ));
+        /*
         $columns = $this->get_columns();
         $hidden = array();
         $sortable = $this->get_sortable_columns();
-        $this->_column_headers = array($columns, $hidden, $sortable);
-        $query = new OSPN_Member_Query();
-        $this->items = $query->get_results();
+        */
+        $this->_column_headers = $this->get_column_info();
+        $this->items = $found_data;
     }
 
     function column_default($item, $column_name)
@@ -50,8 +49,21 @@ class OSPN_Members_List_Table extends WP_List_Table
             case 'url':
                 return $item[$column_name];
             default:
-                return print_r($item, true); // Shwo the whole array for troubleshooting purposes
+                return print_r($item, true); // Show the whole array for troubleshooting purposes
         }
+    }
+
+    function column_cb($item)
+    {
+        return sprintf('<input type="checkbox" name="member[]" value="%s" />', $item['ID']);
+    }
+
+    function column_name($item) {
+        $actions = array(
+            'edit'   => sprintf('<a href="?page=%s&action=%s&member=%s">' . __('Edit') . '</a>', $_REQUEST['page'], 'edit', $item['ID']),
+            'delete' => sprintf('<a href="?page=%s&action=%s&member=%s">' . __('Delete') . '</a>', $_REQUEST['page'], 'delete', $item['ID']),
+        );
+        return sprintf('%1$s %2$s', $item['name'], $this->row_actions($actions));
     }
 
     function get_sortable_columns()
@@ -63,59 +75,11 @@ class OSPN_Members_List_Table extends WP_List_Table
         return $sortable_columns;
     }
 
-    /*
-	public function __construct($args = array()) {
-		parent::__construct(array(
-			'singular' => 'member',
-			'plural' => 'members',
-			'screen' => null
-		));
-	}
-
-	public function prepare_items() {
-		$per_page = 'members_per_page';
-		$members_per_page = $this->get_items_per_page($per_page);
-		$paged = $this->get_pagenum();
-
-        / *
-		$args = array(
-			'number' => $members_per_page,
-			'offset' => ($paged - 1) * $members_per_page,
-			'include' => wp_get_users_with_no_role(),
-			'search' => '',
-			'fields' => 'all_with_meta'
-		);
-		* /
-		$wp_member_search = new OSPN_Member_Query();
-		$this->items = $wp_member_search->get_results();
-		$this->set_pagination_args(array(
-			'total_items' => $wp_member_search->get_total(),
-			'per_page' => $members_per_page,
-		));
-	}
-
-	public function get_columns() {
-		$c = array(
-			'cb'       => '<input type="checkbox" />',
-			'name'     => __( 'Name' ),
-			'url'      => __( 'URL' )
-		);
-
-		error_log("c = " . json_encode($c), 4);
-		return $c;
-	}
-
-	protected function get_sortable_columns() {
-		$c = array(
-			'name'     => 'name',
-			'url'      => 'url'
-		);
-
-		return $c;
-	}
-
-	protected function get_default_primary_column_name() {
-		return 'name';
-	}
-    */
+    function get_bulk_actions()
+    {
+        $actions = array(
+            'delete' => __('Delete')
+        );
+        return $actions;
+    }
 }

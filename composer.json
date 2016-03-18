@@ -1,0 +1,15 @@
+{
+    "name": "ospn/ospn-admin",
+    "authors": [
+        {
+            "name": "Yannick Mauray",
+            "email": "yannick.mauray@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "OSPN\\": "src/"
+        }
+    }
+}
