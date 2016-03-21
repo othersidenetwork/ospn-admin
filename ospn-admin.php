@@ -41,9 +41,13 @@ if (is_admin()) {
     require_once('vendor/autoload.php');
     $plugin = new OSPN_Admin();
 
-    register_activation_hook(__FILE__, array($plugin, 'activate'));
-    register_deactivation_hook(__FILE__, array($plugin, 'deactivate'));
+    register_activation_hook(__FILE__, [$plugin, 'activate']);
+    register_deactivation_hook(__FILE__, [$plugin, 'deactivate']);
 
-    add_action('plugins_loaded', array($plugin, 'loaded'));
-    add_action('admin_menu', array($plugin, 'install_menu'));
+    wp_enqueue_script("ospn-validation", plugin_dir_url(__FILE__) . "js/validation.js", ["jquery"]);
+    wp_enqueue_style("ospn-validation", plugin_dir_url(__FILE__) . "css/style.css");
+
+    $plugin->register_post_actions();
+    $plugin->register_actions();
+
 };
