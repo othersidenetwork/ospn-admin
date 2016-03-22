@@ -22,25 +22,29 @@ class OSPN_PostActions extends OSPN_Base
     /**
      *
      */
-    public function member_new() {
+    public function podcast_edit() {
         global $wpdb;
 
-        $_wp_http_referer = $_REQUEST['_wp_http_referer'];
-        $this->log("request : " . json_encode($_REQUEST));
-        $this->log("referer: " . $_wp_http_referer);
+        /** @var boolean $active */
+        $active = defined($_REQUEST["podcast-active"]);
 
-        $wpdb->insert($wpdb->prefix . 'ospn_podcasts', [
-            'name' => $_REQUEST['podcast-name'],
-            'host' => $_REQUEST['podcast-host'],
-            'website' => $_REQUEST['podcast-website'],
-            'active' => ($_REQUEST['podcast-active'] == 'true'),
-            'contact' => $_REQUEST['podcast-email'],
-            'podcast_feed' => $_REQUEST['podcast-rss-feed'],
-            'twitter_handle' => $_REQUEST['podcast-twitter'],
-            'facebook_url' => $_REQUEST['podcast-facebook-url'],
-            'google_plus_url' => $_REQUEST['podcast-google-plus-url']
-        ], ['%s', '%d', '%s','%d', '%s', '%s', '%s', '%s', '%s']);
-
-        wp_redirect(admin_url('admin.php') . '?page=ospn-admin-members');
+        check_admin_referer("podcast-edit");
+        $wpdb->update(
+            "{$wpdb->prefix}ospn_podcasts",
+            array(
+                "blog_name" => $_REQUEST["podcast-name"],
+                "website" => $_REQUEST["podcast-website"],
+                "contact" => $_REQUEST["podcast-email"],
+                "podcast_feed" => $_REQUEST["podcast-rss-feed"],
+                "active" => $active
+            ),
+            array(
+                "blog_id" => $_REQUEST['blog_id']
+            ),
+            array("%s", "%s", "%s", "%s", "%d"),
+            array("%d")
+        );
+        wp_redirect(admin_url('admin.php') . '?page=ospn-admin-podcasts');
+        die();
     }
 }

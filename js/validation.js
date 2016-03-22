@@ -1,6 +1,6 @@
 (function($) {
     $(document).ready(function() {
-        $('form#member_new_form').submit(function(e) {
+        $('form.ospn-form').submit(function(e) {
             var form = this;
 
             $('[required="required"]', form).each(function (i, o) {
@@ -28,6 +28,15 @@
                 var re = new RegExp('^' + $(o).attr('pattern') + '$');
                 var value = $(o).val();
                 if (value != '' && re.test(value) === false) {
+                    $(o).addClass('invalid');
+                } else {
+                    $(o).removeClass('invalid');
+                }
+            });
+
+            $('[type=url]', form).each(function(i, o) {
+                var re = /^https?:\/\/.+\.[^\.]+\/.*$/;
+                if (re.test($(o).val()) === false) {
                     $(o).addClass('invalid');
                 } else {
                     $(o).removeClass('invalid');

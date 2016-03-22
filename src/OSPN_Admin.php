@@ -24,7 +24,7 @@ class OSPN_Admin extends OSPN_Base
     private $menu_actions;
 
     /**
-     * @var OSPN_PostActions
+     * @var OSPN_PostActions $post_actions
      */
     private $post_actions;
 
@@ -46,15 +46,15 @@ class OSPN_Admin extends OSPN_Base
      *
      */
     public function register_post_actions() {
-        add_action('admin_post_ospn-member-new', [$this->post_actions, 'member_new']);
+        add_action('admin_post_ospn-admin-podcast-edit', array($this->post_actions, 'podcast_edit'));
     }
 
     /**
      *
      */
     public function register_actions() {
-        add_action('plugins_loaded', [$this, 'loaded']);
-        add_action('admin_menu', [$this, 'install_menu']);
+        add_action('plugins_loaded', array($this, 'loaded'));
+        add_action('admin_menu', array($this, 'install_menu'));
     }
 
     /**
@@ -78,13 +78,18 @@ class OSPN_Admin extends OSPN_Base
         $installed_version = get_option("ospn_admin_db_version");
         if ($installed_version != $this->db_version) {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            dbDelta(OSPN_UpdateQueries::members());
+            dbDelta(OSPN_UpdateQueries::poscasts());
+            dbDelta(OSPN_UpdateQueries::socials());
+            dbDelta(OSPN_UpdateQueries::podcast_socials());
+            OSPN_UpdateQueries::update_data();
             update_option("ospn_admin_db_version", $this->db_version);
             add_action('admin_notices', function() {
                 $message = __('Your database has been updated.', 'ospn-admin');
                 echo sprintf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message);
             });
         }
+
+        OSPN_UpdateQueries::update_blog_names();
     }
 
     /**
@@ -93,17 +98,18 @@ class OSPN_Admin extends OSPN_Base
     public function install_menu() {
         $plugin = $this;
         if (current_user_can('manage_options')) {
-            add_menu_page('OSPN - Admin', 'OSPN Admin', 'manage_options', 'ospn-admin-members');
+            add_menu_page('OSPN - Admin', 'OSPN Admin', 'manage_options', 'ospn-admin-podcasts');
 
-            $hook = add_submenu_page('ospn-admin-members', 'OSPN - ' . __('Members'), __('All members'), 'manage_options', 'ospn-admin-members', function() use (&$plugin) {
-                $plugin->read_view('members.php');
+            $hook = add_submenu_page('ospn-admin-podcasts', 'OSPN - ' . __('Podcasts'), __('All podcasts'), 'manage_options', 'ospn-admin-podcasts', function() use (&$plugin) {
+                $plugin->read_view('podcasts.php');
             });
-            add_action('load-' . $hook, [$this->menu_actions, 'members']);
+            add_action('load-' . $hook, array($this->menu_actions, 'podcasts'));
 
-            $hook = add_submenu_page('ospn-admin-members', 'OSPN - ' . __('Add New Member'), __('Add'), 'manage_options', 'ospn-admin-member-new', function() use (&$plugin) {
-                $plugin->read_view('member_new.php');
+            $hook = add_submenu_page(null, 'OSPN - ' . __('Edit Podcast'), __('Edit podcast'), 'manage_options', 'ospn-admin-podcast-edit', function() use (&$plugin) {
+                $plugin->read_view('podcast.php');
             });
-            add_action('load-' . $hook, [$this->menu_actions, 'member_new']);
+            add_action('load-' . $hook, array($this->menu_actions, 'podcast_edit'));
+
         }
     }
 

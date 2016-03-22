@@ -1,15 +1,17 @@
 {
-    "name": "ospn/ospn-admin",
-    "authors": [
-        {
-            "name": "Yannick Mauray",
-            "email": "yannick.mauray@gmail.com"
-        }
-    ],
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "OSPN\\": "src/"
-        }
+  "name": "ospn/ospn-admin",
+  "authors": [
+    {
+      "name": "Yannick Mauray",
+      "email": "yannick.mauray@gmail.com"
     }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "OSPN\\": "src/",
+      "OSPN\\Table\\": "src/tables",
+      "OSPN\\Form\\": "src/forms"
+    }
+  }
 }

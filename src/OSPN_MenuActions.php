@@ -7,6 +7,8 @@
  */
 
 namespace OSPN;
+use OSPN\Form\OSPN_Podcast_Form;
+use OSPN\Table\OSPN_Podcasts_Table;
 
 /**
  * Class OSPN_MenuActions
@@ -14,17 +16,35 @@ namespace OSPN;
  */
 class OSPN_MenuActions extends OSPN_Base
 {
-    public function members() {
-        global $wpdb;
-
-        $blog_ids = $wpdb->get_results("SELECT blog_id FROM wp_blogs WHERE blog_id > 1");
-        
-        SELECT * from wp_blogs LEFT JOIN wp_ospn_podcasts on wp_blogs.blog_id = wp_ospn_podcasts.blog_id;
+    public function podcasts() {
+        global $ospn_podcasts_table;
+        $ospn_podcasts_table = new OSPN_Podcasts_Table();
     }
 
-    public function member_new() {
-        global $wpdb, $allusers;
-        $allusers = $wpdb->get_results("SELECT ID, display_name FROM $wpdb->users ORDER BY display_name ASC");
+    public function podcast_edit() {
+        global $wpdb;
+
+        /** @global OSPN_Podcast_Form $podcast_form */
+        global $podcast_form;
+
+        $podcast = $_REQUEST['podcast'];
+        $p = $wpdb->get_row(<<<TAG
+SELECT
+	p.*
+FROM
+	{$wpdb->prefix}ospn_podcasts p
+WHERE
+	p.blog_id = {$podcast};
+TAG
+);
+        $podcast_form = new OSPN_Podcast_Form();
+        $podcast_form->blog_id = $p->blog_id;
+        $podcast_form->blog_name = $p->blog_name;
+        $podcast_form->host_id = $p->host_id;
+        $podcast_form->website = $p->website;
+        $podcast_form->contact = $p->contact;
+        $podcast_form->podcast_feed = $p->podcast_feed;
+        $podcast_form->active = $p->active;
     }
 
 }
