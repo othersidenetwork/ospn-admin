@@ -15,8 +15,11 @@ namespace OSPN;
 class OSPN_MenuActions extends OSPN_Base
 {
     public function members() {
-        global $message;
-        $message = "hello, world !";
+        global $wpdb;
+
+        $blog_ids = $wpdb->get_results("SELECT blog_id FROM wp_blogs WHERE blog_id > 1");
+        
+        SELECT * from wp_blogs LEFT JOIN wp_ospn_podcasts on wp_blogs.blog_id = wp_ospn_podcasts.blog_id;
     }
 
     public function member_new() {

@@ -31,7 +31,7 @@ class OSPN_Admin extends OSPN_Base
     /**
      * @var string
      */
-    private $db_version = '0.1.0';
+    private $db_version = '0.1.0a';
 
     /**
      * OSPN_Admin constructor.
