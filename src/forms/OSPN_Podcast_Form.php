@@ -11,6 +11,7 @@ class OSPN_Podcast_Form
     public $blog_id;
     public $podcast_name;
     public $host_id;
+    public $host2_id;
     public $website;
     public $contact;
     public $podcast_feed;

@@ -32,6 +32,19 @@ global $podcast_form;
                 <th><label for="podcast-host"><?php _e('Host') ?></label></th>
                 <td>
                     <?php wp_dropdown_users(array(
+                        "name" => "podcast-host",
+                        "selected" => $podcast_form->host_id,
+                        "blog_id" => $podcast_form->blog_id
+                    )); ?>
+                </td>
+            </tr>
+            <tr class="podcast-host2-wrap">
+                <th><label for="podcast-host2"><?php _e('Host') ?></label></th>
+                <td>
+                    <?php wp_dropdown_users(array(
+                        "name" => "podcast-host2",
+                        "selected" => $podcast_form->host2_id,
+                        "show_option_none" => __("None"),
                         "blog_id" => $podcast_form->blog_id
                     )); ?>
                 </td>

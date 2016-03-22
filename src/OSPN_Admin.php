@@ -12,19 +12,13 @@ use OSPN\OSPN_Update_Queries;
  */
 class OSPN_Admin extends OSPN_Base
 {
-    /**
-     * @var \OSPN\OSPN_Menu_Actions
-     */
+    /** @var \OSPN\OSPN_Menu_Actions $menu_actions */
     private $menu_actions;
 
-    /**
-     * @var OSPN_Post_Actions $post_actions
-     */
+    /** @var OSPN_Post_Actions $post_actions */
     private $post_actions;
 
-    /**
-     * @var string
-     */
+    /** @var string $db_version */
     private $db_version = '0.1.0';
 
     /**
@@ -69,15 +63,18 @@ class OSPN_Admin extends OSPN_Base
      *
      */
     public function loaded() {
+        /** @var string $installed_version */
         $installed_version = get_option("ospn_admin_db_version");
         if ($installed_version != $this->db_version) {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            dbDelta(OSPN_Update_Queries::poscasts());
+            dbDelta(OSPN_Update_Queries::podcasts());
+            dbDelta(OSPN_Update_Queries::podcast_hosts());
             dbDelta(OSPN_Update_Queries::socials());
             dbDelta(OSPN_Update_Queries::podcast_socials());
             OSPN_Update_Queries::update_data();
             update_option("ospn_admin_db_version", $this->db_version);
             add_action('admin_notices', function() {
+                /** @var string $message */
                 $message = __('Your database has been updated.', 'ospn-admin');
                 echo sprintf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message);
             });
@@ -90,10 +87,12 @@ class OSPN_Admin extends OSPN_Base
      *
      */
     public function install_menu() {
+        /** @var OSPN_Admin $plugin */
         $plugin = $this;
-        if (current_user_can('manage_options')) {
+        if (current_user_can('manage_sites')) {
             add_menu_page('OSPN - Admin', 'OSPN Admin', 'manage_options', 'ospn-admin-podcasts');
 
+            /** @var string $hook */
             $hook = add_submenu_page('ospn-admin-podcasts', 'OSPN - ' . __('Podcasts'), __('All podcasts'), 'manage_options', 'ospn-admin-podcasts', function() use (&$plugin) {
                 $plugin->read_view('podcasts.php');
             });

@@ -6,7 +6,7 @@ Description:       Plugin for the administrative needs of the Other Side Podcast
 Version:           0.1.0
 Require WP:        4.4
 Require PHP:       5.3.0
-Author:            Other Side Network
+Author:            Other Side Podcast Network
 Author URI:        https://github.com/othersidenetwork
 License:           GNU General Public License v3
 License URI:       http://www.gnu.org/licenses/gpl-3.0.html
@@ -41,10 +41,10 @@ if (is_admin()) {
     require_once('vendor/autoload.php');
     $plugin = new OSPN_Admin();
 
-    register_activation_hook(__FILE__, [$plugin, 'activate']);
-    register_deactivation_hook(__FILE__, [$plugin, 'deactivate']);
+    register_activation_hook(__FILE__, array($plugin, 'activate'));
+    register_deactivation_hook(__FILE__, array($plugin, 'deactivate'));
 
-    wp_enqueue_script("ospn-validation", plugin_dir_url(__FILE__) . "js/validation.js", ["jquery"]);
+    wp_enqueue_script("ospn-validation", plugin_dir_url(__FILE__) . "js/validation.js", array("jquery"));
     wp_enqueue_style("ospn-validation", plugin_dir_url(__FILE__) . "css/style.css");
 
     $plugin->register_post_actions();
