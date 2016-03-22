@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: yannick
- * Date: 18.03.16
- * Time: 08:20
- */
 
 namespace OSPN;
 
 
-class OSPN_UpdateQueries extends OSPN_Base
+class OSPN_Update_Queries extends OSPN_Base
 {
     public static function poscasts() {
         global $wpdb;
@@ -18,7 +12,7 @@ class OSPN_UpdateQueries extends OSPN_Base
 CREATE TABLE {$wpdb->prefix}ospn_podcasts (
   blog_id bigint(20) NOT NULL,
   host_id bigint(20) NOT NULL,
-  blog_name longtext NOT NULL,
+  podcast_name longtext NOT NULL,
   website longtext NOT NULL,
   contact tinytext NOT NULL,
   podcast_feed longtext NOT NULL,
@@ -50,7 +44,7 @@ TAG;
         $sql = <<<TAG
 CREATE TABLE {$wpdb->prefix}ospn_podcast_socials (
   ID bigint(20) NOT NULL AUTO_INCREMENT,
-  type_socials_id bigint(20),
+  socials_id bigint(20),
   value longtext,
   PRIMARY KEY  ID (ID)
 ) $charset_collate;
@@ -60,7 +54,7 @@ TAG;
 
     public static function update_data()
     {
-        OSPN_UpdateQueries::update_type_socials();
+        OSPN_Update_Queries::update_type_socials();
     }
 
     private function update_type_socials() {
@@ -105,7 +99,7 @@ TAG;
                 array("%s", "%s", "%s")
             );
             $wpdb->insert(
-                "{$wpdb->prefix}ospn_type_socials",
+                "{$wpdb->prefix}ospn_socials",
                 array(
                     "name" => "diaspora* URL",
                     "placeholder" => "http://...",
@@ -122,7 +116,7 @@ TAG;
 SELECT
 	b.blog_id,
 	p.blog_id p_blog_id,
-	p.blog_name
+	p.podcast_name
 FROM
 	{$wpdb->blogs} b
 	LEFT JOIN {$wpdb->prefix}ospn_podcasts p ON b.blog_id = p.blog_id
@@ -145,7 +139,7 @@ TAG;
                 "{$wpdb->prefix}ospn_podcasts",
                 array(
                     "blog_id" => $row->blog_id,
-                    "blog_name" => $blog_name
+                    "podcast_name" => $blog_name
                 ),
                 array("%d", "%s")
             );

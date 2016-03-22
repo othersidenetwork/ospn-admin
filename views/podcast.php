@@ -10,9 +10,10 @@ if (!current_user_can('manage_options')) {
 
 use OSPN\Form\OSPN_Podcast_Form;
 
-/** @global OSPN_Podcast_Form $podcast_form */
+/**
+ * @global OSPN_Podcast_Form $podcast_form
+ */
 global $podcast_form;
-
 
 ?><div class="wrap">
     <h1 id="podcast-new"><?php _e("Edit Podcast"); ?></h1>
@@ -25,7 +26,7 @@ global $podcast_form;
         <table class="form-table">
             <tr class="podcast-name-wrap">
                 <th><label for="podcast-name"><?php _e('Podcast Name') ?></label></th>
-                <td><input type="text" name="podcast-name" id="podcast-name" value="<?php echo $podcast_form->blog_name; ?>" class="regular-text" required="required" /></td>
+                <td><input type="text" name="podcast-name" id="podcast-name" value="<?php echo $podcast_form->podcast_name; ?>" class="regular-text" required="required" /></td>
             </tr>
             <tr class="podcast-host-wrap">
                 <th><label for="podcast-host"><?php _e('Host') ?></label></th>

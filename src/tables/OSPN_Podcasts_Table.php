@@ -37,7 +37,7 @@ class OSPN_Podcasts_Table extends WP_List_Table
 SELECT
     b.blog_id,
     b.domain,
-	p.blog_name,
+	p.podcast_name,
 	p.website,
 	p.contact,
 	p.active,
@@ -48,7 +48,7 @@ FROM
 WHERE
 	b.blog_id > 1
 ORDER BY
-	p.blog_name ASC,
+	p.podcast_name ASC,
 	b.domain ASC
 TAG;
         $results = $wpdb->get_results($sql);
@@ -103,7 +103,7 @@ TAG;
             'edit'   => sprintf('<a href="?page=ospn-admin-podcast-edit&podcast=%d">' . __('Edit') . '</a>', $item->blog_id),
             /*'delete' => sprintf('<a href="?page=%s&action=%s&member=%s">' . __('Delete') . '</a>', $_REQUEST['page'], 'delete', $item->blog_id),*/
         );
-        return sprintf('%1$s %2$s', $item->blog_name == null ? $item->domain : $item->blog_name, $this->row_actions($actions));
+        return sprintf('%1$s %2$s', $item->podcast_name == null ? $item->domain : $item->podcast_name, $this->row_actions($actions));
     }
 
     /**

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: yannick
- * Date: 18.03.16
- * Time: 08:27
- */
 
 namespace OSPN;
 use OSPN\Form\OSPN_Podcast_Form;
@@ -14,7 +8,7 @@ use OSPN\Table\OSPN_Podcasts_Table;
  * Class OSPN_MenuActions
  * @package OSPN
  */
-class OSPN_MenuActions extends OSPN_Base
+class OSPN_Menu_Actions extends OSPN_Base
 {
     public function podcasts() {
         global $ospn_podcasts_table;
@@ -39,7 +33,7 @@ TAG
 );
         $podcast_form = new OSPN_Podcast_Form();
         $podcast_form->blog_id = $p->blog_id;
-        $podcast_form->blog_name = $p->blog_name;
+        $podcast_form->podcast_name = $p->podcast_name;
         $podcast_form->host_id = $p->host_id;
         $podcast_form->website = $p->website;
         $podcast_form->contact = $p->contact;

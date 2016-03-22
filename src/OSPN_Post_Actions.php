@@ -1,15 +1,8 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: yannick
- * Date: 19.03.16
- * Time: 13:07
- */
 
 namespace OSPN;
 
-
-class OSPN_PostActions extends OSPN_Base
+class OSPN_Post_Actions extends OSPN_Base
 {
 
     /**
@@ -32,7 +25,7 @@ class OSPN_PostActions extends OSPN_Base
         $wpdb->update(
             "{$wpdb->prefix}ospn_podcasts",
             array(
-                "blog_name" => $_REQUEST["podcast-name"],
+                "podcast_name" => $_REQUEST["podcast-name"],
                 "website" => $_REQUEST["podcast-website"],
                 "contact" => $_REQUEST["podcast-email"],
                 "podcast_feed" => $_REQUEST["podcast-rss-feed"],

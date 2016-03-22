@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: yannick
- * Date: 22.03.16
- * Time: 15:10
- */
 
 namespace OSPN\Form;
 
@@ -15,7 +9,7 @@ namespace OSPN\Form;
 class OSPN_Podcast_Form
 {
     public $blog_id;
-    public $blog_name;
+    public $podcast_name;
     public $host_id;
     public $website;
     public $contact;
