@@ -38,7 +38,7 @@ if (!defined('WPINC')) {
 	die;
 }
 
-if (is_admin()) {
+if (is_network_admin()) {
     require_once('vendor/autoload.php');
     $plugin = new OSPN_Admin();
 
