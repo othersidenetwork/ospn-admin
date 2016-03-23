@@ -111,7 +111,7 @@ class OSPN_Admin extends OSPN_Base
     /**
      * @param $view string
      */
-    private function read_view($view) {
+    public function read_view($view) {
         ob_start();
         include (dirname(dirname(__FILE__)) . '/views/' . $view);
         echo ob_get_clean();
