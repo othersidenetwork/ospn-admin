@@ -42,7 +42,7 @@ class OSPN_Admin extends OSPN_Base
      */
     public function register_actions() {
         add_action('plugins_loaded', array($this, 'loaded'));
-        add_action('admin_menu', array($this, 'install_menu'));
+        add_action('network_admin_menu', array($this, 'install_menu'));
     }
 
     /**

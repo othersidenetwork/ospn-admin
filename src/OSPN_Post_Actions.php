@@ -63,7 +63,7 @@ class OSPN_Post_Actions extends OSPN_Base
                 array("%d", "%d")
             );
         }
-        wp_redirect(admin_url('admin.php') . '?page=ospn-admin-podcasts');
+        wp_redirect(admin_url('network/admin.php') . '?page=ospn-admin-podcasts');
         die();
     }
 }
