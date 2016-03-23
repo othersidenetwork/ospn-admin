@@ -38,7 +38,7 @@ if (!defined('WPINC')) {
 	die;
 }
 
-if (is_network_admin()) {
+if (is_network_admin() || (array_key_exists("_wp_http_referer", $_REQUEST) && strncmp($_REQUEST["_wp_http_referer"], "/wp-admin/network/admin.php?page=ospn-", 38) == 0)) {
     require_once('vendor/autoload.php');
     $plugin = new OSPN_Admin();
 
