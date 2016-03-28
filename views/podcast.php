@@ -28,6 +28,18 @@ global $podcast_form;
                 <th><label for="podcast-name"><?php _e('Podcast Name') ?></label></th>
                 <td><input type="text" name="podcast-name" id="podcast-name" value="<?php echo $podcast_form->podcast_name; ?>" class="regular-text" required="required" /></td>
             </tr>
+            <tr class="podcast-tagline-wrap">
+                <th><label for="podcast-tagline"><?php _e('Tagline') ?></label></th>
+                <td>
+                    <textarea name="podcast-tagline" id="podcast-tagline" cols="30" rows="3" style="width: 25em;" required="required"><?php echo $podcast_form->tagline; ?></textarea>
+                </td>
+            </tr>
+            <tr class="podcast-description-wrap">
+                <th><label for="podcast-description"><?php _e('Description') ?></label></th>
+                <td>
+                    <textarea name="podcast-description" id="podcast-description" cols="30" rows="15" style="width: 25em;" required="required"><?php echo $podcast_form->description; ?></textarea>
+                </td>
+            </tr>
             <tr class="podcast-host-wrap">
                 <th><label for="podcast-host"><?php _e('Host') ?></label></th>
                 <td>
@@ -49,6 +61,22 @@ global $podcast_form;
                     )); ?>
                 </td>
             </tr>
+            <tr class="podcast-logo-wrap">
+                <th><label for="podcast-logo"><?php _e('Logo (URL)') ?></label></th>
+                <td><input type="url" name="podcast-logo" id="podcast-logo" value="<?php echo $podcast_form->logo; ?>" class="regular-text" required="required" /></td>
+            </tr>
+            <?php if ($podcast_form->logo != ''):?>
+            <tr>
+                <th>
+
+                </th>
+                <td>
+                    <img src="<?php echo $podcast_form->logo; ?>" width="50px" height="50px">
+                    <img src="<?php echo $podcast_form->logo; ?>" width="100px" height="100px">
+                    <img src="<?php echo $podcast_form->logo; ?>" width="200px" height="200px">
+                </td>
+            </tr>
+            <?php endif; ?>
             <tr class="podcast-email-wrap">
                 <th><label for="podcast-email"><?php _e('Contact Mail') ?></label></th>
                 <td><input type="email" name="podcast-email" id="podcast-email" value="<?php echo $podcast_form->contact; ?>" class="regular-text" required="required" /></td>
@@ -62,6 +90,7 @@ global $podcast_form;
                 <td><input type="url" name="podcast-rss-feed" id="podcast-rss-feed" value="<?php echo $podcast_form->podcast_feed; ?>" class="regular-text" required="required" /></td>
             </tr>
         </table>
+        <?php if ($podcast_form->origin == "admin"): ?>
         <h2><?php _e('Administrative informations'); ?></h2>
         <table class="form-table">
             <tr class="podcast-active-wrap">
@@ -69,6 +98,10 @@ global $podcast_form;
                 <td><label for="podcast-active"><input name="podcast-active" type="checkbox" id="podcast-active" value="true"<?php if ($podcast_form->active == 1) echo ' checked="checked"'; ?>/><?php _e( 'Mark this podcast as active'); ?></label></td>
             </tr>
         </table>
+        <?php else: ?>
+            <?php if ($podcast_form->active == 1): ?><input type="hidden" name="podcast-active" id="podcast-active" value="true"><?php endif; ?>
+        <?php endif; ?>
+        <input type="hidden" name="origin" id="origin" value="<?php echo $podcast_form->origin; ?>">
         <?php submit_button(__('Update'), 'primary', 'podcast-edit-submit', true, array('id' => 'podcast-edit-submit')); ?>
     </form>
 </div>

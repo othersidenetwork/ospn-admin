@@ -44,7 +44,7 @@ SELECT
 	p.podcast_feed
 FROM
 	{$wpdb->blogs} b
-	LEFT JOIN {$wpdb->prefix}ospn_podcasts p ON b.blog_id = p.blog_id
+	LEFT JOIN {$wpdb->base_prefix}ospn_podcasts p ON b.blog_id = p.blog_id
 WHERE
 	b.blog_id > 1
 ORDER BY

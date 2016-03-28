@@ -19,7 +19,7 @@ class OSPN_Admin extends OSPN_Base
     private $post_actions;
 
     /** @var string $db_version */
-    private $db_version = '0.1.0';
+    private $db_version = '0.2.0';
 
     /**
      * OSPN_Admin constructor.
@@ -43,6 +43,7 @@ class OSPN_Admin extends OSPN_Base
     public function register_actions() {
         add_action('plugins_loaded', array($this, 'loaded'));
         add_action('network_admin_menu', array($this, 'install_menu'));
+        add_action('admin_menu', array($this, 'install_simple_menu'));
     }
 
     /**
@@ -102,7 +103,22 @@ class OSPN_Admin extends OSPN_Base
                 $plugin->read_view('podcast.php');
             });
             add_action('load-' . $hook, array($this->menu_actions, 'podcast_edit'));
+        }
+    }
 
+    public function install_simple_menu() {
+        if (get_current_blog_id() != 1) {
+            /** @var OSPN_Admin $plugin */
+            $plugin = $this;
+            add_menu_page('OSPN', 'OSPN', 'manage_options', 'ospn-profile');
+
+            /** @var string $hook */
+            $hook = add_submenu_page('ospn-profile', 'OSPN - ' . __('Profile'), __('Profile'), 'manage_options', 'ospn-profile', function () use (&$plugin) {
+                $plugin->read_view('podcast.php');
+            });
+            add_action('load-' . $hook, array($this->menu_actions, 'profile'));
+        } else {
+            $this->install_menu();
         }
     }
 

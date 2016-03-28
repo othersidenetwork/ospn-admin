@@ -24,9 +24,12 @@ class OSPN_Post_Actions extends OSPN_Base
         check_admin_referer("podcast-edit");
 
         $wpdb->update(
-            "{$wpdb->prefix}ospn_podcasts",
+            "{$wpdb->base_prefix}ospn_podcasts",
             array(
                 "podcast_name" => $_REQUEST["podcast-name"],
+                "tagline" => $_REQUEST["podcast-tagline"],
+                "description" => $_REQUEST["podcast-description"],
+                "logo" => $_REQUEST["podcast-logo"],
                 "website" => $_REQUEST["podcast-website"],
                 "contact" => $_REQUEST["podcast-email"],
                 "podcast_feed" => $_REQUEST["podcast-rss-feed"],
@@ -35,35 +38,42 @@ class OSPN_Post_Actions extends OSPN_Base
             array(
                 "blog_id" => $_REQUEST['blog_id']
             ),
-            array("%s", "%s", "%s", "%s", "%d"),
+            array("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%d"),
             array("%d")
         );
         $wpdb->delete(
-            "{$wpdb->prefix}ospn_podcast_hosts",
+            "{$wpdb->base_prefix}ospn_podcast_hosts",
             array(
                 "podcast_id" => $_REQUEST["blog_id"]
             ),
             array("%d")
         );
         $wpdb->insert(
-            "{$wpdb->prefix}ospn_podcast_hosts",
+            "{$wpdb->base_prefix}ospn_podcast_hosts",
             array(
                 "podcast_id" => $_REQUEST["blog_id"],
-                "host_id" => $_REQUEST["podcast-host"]
+                "host_id" => $_REQUEST["podcast-host"],
+                "sequence" => 0
             ),
-            array("%d", "%d")
+            array("%d", "%d", "%d")
         );
         if ($_REQUEST["podcast-host2"] != -1) {
             $wpdb->insert(
-                "{$wpdb->prefix}ospn_podcast_hosts",
+                "{$wpdb->base_prefix}ospn_podcast_hosts",
                 array(
                     "podcast_id" => $_REQUEST["blog_id"],
-                    "host_id" => $_REQUEST["podcast-host2"]
+                    "host_id" => $_REQUEST["podcast-host2"],
+                    "sequence" => 1
                 ),
-                array("%d", "%d")
+                array("%d", "%d", "%d")
             );
         }
-        wp_redirect(admin_url('network/admin.php') . '?page=ospn-admin-podcasts');
+        if ($_REQUEST["origin"] == "admin") {
+            wp_redirect(admin_url('network/admin.php') . '?page=ospn-admin-podcasts');
+        } else {
+            wp_redirect($_REQUEST["_wp_http_referer"]);
+        }
+
         die();
     }
 }

@@ -10,10 +10,14 @@ class OSPN_Podcast_Form
 {
     public $blog_id;
     public $podcast_name;
+    public $tagline;
+    public $logo;
+    public $description;
     public $host_id;
     public $host2_id;
     public $website;
     public $contact;
     public $podcast_feed;
     public $active;
+    public $origin;
 }
