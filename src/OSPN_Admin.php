@@ -82,7 +82,7 @@ class OSPN_Admin extends OSPN_Base
             /** @var string $podcasts */
             $podcasts = get_query_var("podcasts");
             if ($podcasts != null && $podcasts != "") {
-                $ospn = new OSPN_Plugin();
+                $ospn = new OSPN_Plugin($podcasts);
                 /** @var string $podcast_template */
                 $podcast_template = locate_template(array("podcast-{$podcasts}.php", "podcast.php"));
                 return $podcast_template;
