@@ -10,6 +10,7 @@ class OSPN_Podcast_Form
 {
     public $blog_id;
     public $podcast_name;
+    public $podcast_slug;
     public $tagline;
     public $logo;
     public $description;

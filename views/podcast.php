@@ -36,6 +36,10 @@ global $podcast_form;
                 <th><label for="podcast-name"><?php _e('Podcast Name') ?></label></th>
                 <td><input type="text" name="podcast-name" id="podcast-name" value="<?php echo $podcast_form->podcast_name; ?>" class="regular-text" required="required" /></td>
             </tr>
+            <tr class="podcast-slug-wrap">
+                <th><label for="podcast-slug"><?php _e('Podcast Slug') ?></label></th>
+                <td><input type="text" name="podcast-slug" id="podcast-slug" value="<?php echo $podcast_form->podcast_slug; ?>" class="regular-text" required="required" /></td>
+            </tr>
             <tr class="podcast-tagline-wrap">
                 <th><label for="podcast-tagline"><?php _e('Tagline') ?></label></th>
                 <td>

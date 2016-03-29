@@ -17,6 +17,7 @@ class OSPN_Update_Queries extends OSPN_Base
 CREATE TABLE {$wpdb->base_prefix}ospn_podcasts (
   blog_id bigint(20) NOT NULL,
   podcast_name tinytext NOT NULL,
+  podcast_slug tinytext,
   tagline text NOT NULL,
   logo tinytext NOT NULL,
   description mediumtext NOT NULL,
@@ -143,7 +144,9 @@ TAG;
     }
 
     public static function update_blog_names() {
+        /** @global $wpdb \wpdb */
         global $wpdb;
+        /** @var array $results */
         $results = $wpdb->get_results(<<<TAG
 SELECT
 	b.blog_id,
@@ -157,7 +160,9 @@ HAVING
 	AND b.blog_id > 1
 TAG
 );
+        /** @var object $row */
         foreach($results as $row) {
+            /** @var string $sql */
             $sql = <<<TAG
 SELECT
 	o.option_value
@@ -166,6 +171,7 @@ from
 WHERE
 	o.option_name = 'blogname';
 TAG;
+            /** @var string $blog_name */
             $blog_name = $wpdb->get_var($sql);
             $wpdb->insert(
                 "{$wpdb->base_prefix}ospn_podcasts",
@@ -174,6 +180,44 @@ TAG;
                     "podcast_name" => $blog_name
                 ),
                 array("%d", "%s")
+            );
+        }
+    }
+
+    public static function update_blog_slugs() {
+        /** @global $wpdb \wpdb */
+        global $wpdb;
+        /** @var array $results */
+        $results = $wpdb->get_results(<<<TAG
+SELECT
+	b.blog_id,
+	p.blog_id p_blog_id,
+    p.podcast_name,
+    p.podcast_slug
+FROM
+	{$wpdb->blogs} b
+	LEFT JOIN {$wpdb->base_prefix}ospn_podcasts p ON b.blog_id = p.blog_id
+HAVING
+	p.podcast_slug IS null
+	AND b.blog_id > 1
+TAG
+        );
+        /** @var object $row */
+        foreach($results as $row) {
+            /** @var string $podcast_name */
+            $podcast_name = $row->podcast_name;
+            /** @var string $podcast_slug */
+            $podcast_slug = sanitize_title_for_query($podcast_name);
+            $wpdb->update(
+                "{$wpdb->base_prefix}ospn_podcasts",
+                array(
+                    "podcast_slug" => $podcast_slug
+                ),
+                array(
+                    "blog_id" => $row->blog_id
+                ),
+                array("%s"),
+                array("%d")
             );
         }
     }

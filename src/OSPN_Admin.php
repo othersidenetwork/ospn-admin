@@ -19,7 +19,7 @@ class OSPN_Admin extends OSPN_Base
     private $post_actions;
 
     /** @var string $db_version */
-    private $db_version = '0.2.0';
+    private $db_version = '0.3.0';
 
     /**
      * OSPN_Admin constructor.
@@ -41,6 +41,7 @@ class OSPN_Admin extends OSPN_Base
      *
      */
     public function register_actions() {
+        add_action('init', array($this, 'init'));
         add_action('plugins_loaded', array($this, 'loaded'));
         add_action('network_admin_menu', array($this, 'install_menu'));
         add_action('admin_menu', array($this, 'install_simple_menu'));
@@ -50,7 +51,7 @@ class OSPN_Admin extends OSPN_Base
      *
      */
     public function activate() {
-        // Not implemented yet.
+        flush_rewrite_rules();
     }
 
     /**
@@ -58,6 +59,37 @@ class OSPN_Admin extends OSPN_Base
      */
     public function deactivate() {
         // Not implemented
+    }
+
+    /**
+     *
+     */
+    public function init() {
+        add_rewrite_endpoint('podcasts', EP_ROOT);
+        add_filter('query_vars', function($vars) {
+            $vars[] = 'podcasts';
+            return $vars;
+        });
+        add_filter('request', function($vars) {
+            if ($vars != null && is_array($vars) && array_key_exists("podcasts", $vars) && "" == $vars["podcasts"]) {
+                $vars["podcasts"] = "all";
+            }
+            return $vars;
+        });
+        add_filter('template_include', function($template) {
+            /** @global $ospn OSPN_Plugin */
+            global $ospn;
+            /** @var string $podcasts */
+            $podcasts = get_query_var("podcasts");
+            if ($podcasts != null && $podcasts != "") {
+                $ospn = new OSPN_Plugin();
+                /** @var string $podcast_template */
+                $podcast_template = locate_template(array("podcast-{$podcasts}.php", "podcast.php"));
+                return $podcast_template;
+            } else {
+                return $template;
+            }
+        });
     }
 
     /**
@@ -74,14 +106,10 @@ class OSPN_Admin extends OSPN_Base
             dbDelta(OSPN_Update_Queries::podcast_socials());
             OSPN_Update_Queries::update_data();
             update_option("ospn_admin_db_version", $this->db_version);
-            add_action('admin_notices', function() {
-                /** @var string $message */
-                $message = __('Your database has been updated.', 'ospn-admin');
-                echo sprintf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message);
-            });
         }
 
         OSPN_Update_Queries::update_blog_names();
+        OSPN_Update_Queries::update_blog_slugs();
     }
 
     /**

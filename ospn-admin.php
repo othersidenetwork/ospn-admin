@@ -50,4 +50,17 @@ wp_enqueue_style("ospn-validation", plugin_dir_url(__FILE__) . "css/style.css");
 $plugin->register_post_actions();
 $plugin->register_actions();
 
-$public_plugin = new OSPN_Plugin();
+/**
+ * @return bool
+ */
+function have_podcasts() {
+    /** @global $ospn OSPN_Plugin */
+    global $ospn;
+    return $ospn->have_podcasts();
+}
+
+function the_podcast() {
+    /** @global $ospn OSPN_Plugin */
+    global $ospn;
+    $ospn->the_podcast();
+}

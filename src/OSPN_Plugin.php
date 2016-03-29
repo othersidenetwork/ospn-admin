@@ -11,7 +11,6 @@ namespace OSPN;
 
 class OSPN_Plugin extends OSPN_Base
 {
-
     /** @var array[int] $ids */
     private $ids;
 
@@ -39,6 +38,8 @@ class OSPN_Plugin extends OSPN_Base
 
     function __construct() {
         global $wpdb;
+
+        $podcasts = get_query_var("podcasts");
 
         $this->ids = $wpdb->get_results(<<<TAG
 SELECT

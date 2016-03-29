@@ -50,6 +50,7 @@ TAG
         $podcast_form = new OSPN_Podcast_Form();
         $podcast_form->blog_id = $p->blog_id;
         $podcast_form->podcast_name = $p->podcast_name;
+        $podcast_form->podcast_slug = $p->podcast_slug;
         $podcast_form->tagline = $p->tagline;
         $podcast_form->logo = $p->logo;
         $podcast_form->description = $p->description;

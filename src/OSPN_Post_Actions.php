@@ -42,6 +42,7 @@ class OSPN_Post_Actions extends OSPN_Base
             "{$wpdb->base_prefix}ospn_podcasts",
             array(
                 "podcast_name" => $_REQUEST["podcast-name"],
+                "podcast_slug" => $_REQUEST["podcast-slug"],
                 "tagline" => $_REQUEST["podcast-tagline"],
                 "description" => $_REQUEST["podcast-description"],
                 "logo" => $_REQUEST["podcast-logo"],
@@ -53,7 +54,7 @@ class OSPN_Post_Actions extends OSPN_Base
             array(
                 "blog_id" => $_REQUEST['blog_id']
             ),
-            array("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%d"),
+            array("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%d"),
             array("%d")
         );
         $wpdb->delete(
