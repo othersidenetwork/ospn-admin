@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 use OSPN\OSPN_Admin;
+use OSPN\OSPN_Plugin;
 
 if (!defined('WPINC')) {
 	die;
@@ -48,3 +49,5 @@ wp_enqueue_style("ospn-validation", plugin_dir_url(__FILE__) . "css/style.css");
 
 $plugin->register_post_actions();
 $plugin->register_actions();
+
+$public_plugin = new OSPN_Plugin();

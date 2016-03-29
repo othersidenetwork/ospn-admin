@@ -122,8 +122,6 @@ class OSPN_Admin extends OSPN_Base
         }
     }
 
-    // Private methods
-
     /**
      * @param $view string
      */
@@ -132,5 +130,4 @@ class OSPN_Admin extends OSPN_Base
         include (dirname(dirname(__FILE__)) . '/views/' . $view);
         echo ob_get_clean();
     }
-
 }
