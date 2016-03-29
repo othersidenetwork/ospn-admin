@@ -15,15 +15,23 @@ use OSPN\Form\OSPN_Podcast_Form;
  */
 global $podcast_form;
 
-?><div class="wrap">
+?><div class="wrap ospn-wrap">
     <h1 id="podcast-new"><?php _e("Edit Podcast"); ?></h1>
     <p><?php _e('Edit podcast info.'); ?></p>
     <form method="post" id="podcast-edit-form" action="<?php echo add_query_arg(array('page' => $_REQUEST['page']), admin_url('admin-post.php')); ?>" novalidate="novalidate" class="ospn-form">
+        <div class="glass"></div>
         <input type="hidden" name="action" value="ospn-admin-podcast-edit" />
         <input type="hidden" name="blog_id" id="blog_id" value="<?php echo $podcast_form->blog_id; ?>">
         <?php wp_nonce_field('podcast-edit'); ?>
         <h2><?php _e('Global Information'); ?> <span class="description"><?php _e('(required)'); ?></span></h2>
         <table class="form-table">
+            <tr class="podcast-rss-feed-wrap">
+                <th><label for="podcast-rss-feed"><?php _e('RSS Feed') ?></label></th>
+                <td>
+                    <input type="url" name="podcast-rss-feed" id="podcast-rss-feed" value="<?php echo $podcast_form->podcast_feed; ?>" class="regular-text" required="required" />
+                    <br/><?php submit_button(__('Fetch data from RSS feed'), 'small', 'podcast-edit-update-from-rss', false, array("x-data-validation" => "bypass")); ?>
+                </td>
+            </tr>
             <tr class="podcast-name-wrap">
                 <th><label for="podcast-name"><?php _e('Podcast Name') ?></label></th>
                 <td><input type="text" name="podcast-name" id="podcast-name" value="<?php echo $podcast_form->podcast_name; ?>" class="regular-text" required="required" /></td>
@@ -85,10 +93,6 @@ global $podcast_form;
                 <th><label for="podcast-website"><?php _e('Website') ?></label></th>
                 <td><input type="url" name="podcast-website" id="podcast-website" value="<?php echo $podcast_form->website; ?>" class="regular-text" required="required" /></td>
             </tr>
-            <tr class="podcast-rss-feed-wrap">
-                <th><label for="podcast-rss-feed"><?php _e('RSS Feed') ?></label></th>
-                <td><input type="url" name="podcast-rss-feed" id="podcast-rss-feed" value="<?php echo $podcast_form->podcast_feed; ?>" class="regular-text" required="required" /></td>
-            </tr>
         </table>
         <?php if ($podcast_form->origin == "admin"): ?>
         <h2><?php _e('Administrative informations'); ?></h2>
@@ -102,6 +106,6 @@ global $podcast_form;
             <?php if ($podcast_form->active == 1): ?><input type="hidden" name="podcast-active" id="podcast-active" value="true"><?php endif; ?>
         <?php endif; ?>
         <input type="hidden" name="origin" id="origin" value="<?php echo $podcast_form->origin; ?>">
-        <?php submit_button(__('Update'), 'primary', 'podcast-edit-submit', true, array('id' => 'podcast-edit-submit')); ?>
+        <?php submit_button(__('Update'), 'primary', 'podcast-edit-submit'); ?>
     </form>
 </div>
