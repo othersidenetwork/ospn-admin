@@ -49,17 +49,26 @@ class OSPN_Plugin extends OSPN_Base
      * OSPN_Plugin constructor.
      * @param $podcast string
      */
-    function __construct($podcast)
+    function __construct($podcast, $hosts = null)
     {
         /** @global $wpdb \wpdb */
         global $wpdb;
 
-        /** @var string $sql */
-        $sql = "SELECT p.blog_id FROM {$wpdb->base_prefix}ospn_podcasts p WHERE p.active = 1";
-        if ($podcast != "all") $sql = "{$sql} AND p.podcast_slug = %s";
-        $sql = "{$sql} ORDER BY p.podcast_slug ASC";
-        $this->ids = $wpdb->get_results($wpdb->prepare($sql, $podcast));
+        /** @var string|null $sql */
+        $sql = null;
+        if ($podcast != null) {
+            $sql = "SELECT p.blog_id FROM {$wpdb->base_prefix}ospn_podcasts p WHERE p.active = 1";
+            if ($podcast != "all") $sql = "{$sql} AND p.podcast_slug = %s";
+            $sql = "{$sql} ORDER BY p.podcast_slug ASC";
+            $this->ids = $wpdb->get_results($wpdb->prepare($sql, $podcast));
+        } else {
+
+        }
         $this->index = 0;
+
+        if ($hosts != null) {
+            
+        }
     }
 
     /**
@@ -231,11 +240,19 @@ TAG
         return $this->host->user_description;
     }
 
-    public function the_host_avatar($echo = true) {
-        $avatar = get_avatar($this->host->ID, 125);
+    public function the_host_avatar($size = 125, $echo = true) {
+        $avatar = get_avatar($this->host->ID, $size);
         if ($echo) {
             echo $avatar;
         }
         return $avatar;
+    }
+
+    public function the_host_permalink($echo = true) {
+        $url = get_author_posts_url($this->host->ID);
+        if ($echo) {
+            echo $url;
+        }
+        return $url;
     }
 }

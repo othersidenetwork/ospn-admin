@@ -66,13 +66,18 @@ class OSPN_Admin extends OSPN_Base
      */
     public function init() {
         add_rewrite_endpoint('podcasts', EP_ROOT);
+        add_rewrite_endpoint('hosts', EP_ROOT);
         add_filter('query_vars', function($vars) {
             $vars[] = 'podcasts';
+            $vars[] = 'hosts';
             return $vars;
         });
         add_filter('request', function($vars) {
             if ($vars != null && is_array($vars) && array_key_exists("podcasts", $vars) && "" == $vars["podcasts"]) {
                 $vars["podcasts"] = "all";
+            }
+            if ($vars != null && is_array($vars) && array_key_exists("hosts", $vars) && "" == $vars["hosts"]) {
+                $vars["hosts"] = "all";
             }
             return $vars;
         });
@@ -86,9 +91,15 @@ class OSPN_Admin extends OSPN_Base
                 /** @var string $podcast_template */
                 $podcast_template = locate_template(array("podcast-{$podcasts}.php", "podcast.php"));
                 return $podcast_template;
-            } else {
-                return $template;
             }
+
+            $hosts = get_query_var("hosts");
+            if ($hosts != null && $hosts != "") {
+                $ospn = new OSPN_Plugin(null, $hosts);
+                $hosts_template = locate_template(array("hosts.php"));
+                return $hosts_template;
+            }
+            return $template;
         });
     }
 
