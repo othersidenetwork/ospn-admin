@@ -67,9 +67,21 @@ class OSPN_Admin extends OSPN_Base
     public function init() {
         add_rewrite_endpoint('podcasts', EP_ROOT);
         add_rewrite_endpoint('hosts', EP_ROOT);
+        add_filter('user_contactmethods', function($contact_methods) {
+            $contact_methods['twitter'] = 'Twitter';
+            $contact_methods['facebook'] = 'Facebook';
+            $contact_methods['googleplus'] = 'Google +';
+            $contact_methods['diaspora'] = 'Diaspora*';
+            $contact_methods['gnusocials'] = 'GNU Social';
+            return $contact_methods;
+        });
         add_filter('query_vars', function($vars) {
-            $vars[] = 'podcasts';
-            $vars[] = 'hosts';
+            if (!array_key_exists("podcasts", $vars)) {
+                $vars[] = 'podcasts';
+            }
+            if (!array_key_exists("hosts", $vars)) {
+                $vars[] = 'hosts';
+            };
             return $vars;
         });
         add_filter('request', function($vars) {
@@ -92,7 +104,6 @@ class OSPN_Admin extends OSPN_Base
                 $podcast_template = locate_template(array("podcast-{$podcasts}.php", "podcast.php"));
                 return $podcast_template;
             }
-
             $hosts = get_query_var("hosts");
             if ($hosts != null && $hosts != "") {
                 $ospn = new OSPN_Plugin(null, $hosts);
@@ -109,7 +120,7 @@ class OSPN_Admin extends OSPN_Base
     public function loaded() {
         /** @var string $installed_version */
         $installed_version = get_option("ospn_admin_db_version");
-        if ($installed_version != $this->db_version) {
+        if (is_network_admin() && $installed_version != $this->db_version) {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta(OSPN_Update_Queries::podcasts());
             dbDelta(OSPN_Update_Queries::podcast_hosts());

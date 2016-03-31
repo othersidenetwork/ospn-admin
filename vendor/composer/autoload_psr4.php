@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'OSPN\\Tags\\' => array($baseDir . '/src/tags'),
     'OSPN\\Table\\' => array($baseDir . '/src/tables'),
     'OSPN\\Form\\' => array($baseDir . '/src/forms'),
     'OSPN\\' => array($baseDir . '/src'),

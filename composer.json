@@ -11,7 +11,8 @@
     "psr-4": {
       "OSPN\\": "src/",
       "OSPN\\Table\\": "src/tables",
-      "OSPN\\Form\\": "src/forms"
+      "OSPN\\Form\\": "src/forms",
+      "OSPN\\Tags\\": "src/tags"
     }
   }
 }
