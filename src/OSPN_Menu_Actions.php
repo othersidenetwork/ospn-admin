@@ -76,6 +76,13 @@ TAG
         if (sizeof($h) > 1) {
             $podcast_form->host2_id = $h[1]->host_id;
         }
+
+        $metas = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_meta WHERE podcast_id = %d", $podcast_form->blog_id));
+        foreach($metas as $meta) {
+            /** @var string $k */
+            $k = "contact_{$meta->meta_key}";
+            $podcast_form->$k = $meta->meta_value;
+        }
     }
 
 }

@@ -39,6 +39,11 @@ class OSPN_Podcast extends OSPN_Base
     /** @var int $host_index */
     public $host_index;
 
+    /** @var  array $contacts */
+    public $contacts;
+    /** @var  int $contact_index */
+    public $contact_index;
+
     function __construct($info)
     {
         /** @global $wpdb \wpdb */
@@ -159,4 +164,20 @@ class OSPN_Podcast extends OSPN_Base
         return $this->tagline;
     }
 
+    /**
+     * @return bool
+     */
+    public function have_contacts() {
+        return ($this->contact_index < sizeof($this->contacts));
+    }
+
+    /**
+     * @return OSPN_Contact
+     */
+    public function the_contact() {
+        /** @var OSPN_Contact $contact */
+        $contact = $this->contacts[$this->contact_index];
+        $this->contact_index = $this->contact_index + 1;
+        return $contact;
+    }
 }

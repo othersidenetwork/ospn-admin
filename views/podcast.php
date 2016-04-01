@@ -98,6 +98,15 @@ global $podcast_form;
                 <td><input type="url" name="podcast-website" id="podcast-website" value="<?php echo $podcast_form->website; ?>" class="regular-text" required="required" /></td>
             </tr>
         </table>
+        <h2><?php _e("Contacts and Social Media"); ?></h2>
+        <table class="form-table">
+            <?php foreach(wp_get_user_contact_methods() as $key => $value): $k = "contact_{$key}"; ?>
+            <tr>
+                <th><label for="<?php echo $k; ?>"><?php echo $value; ?></label></th>
+                <td><input type="text" name="<?php echo $k; ?>" id="<?php echo $k; ?>" value="<?php echo $podcast_form->$k; ?>" class="regular-text"></td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
         <?php if ($podcast_form->origin == "admin"): ?>
         <h2><?php _e('Administrative informations'); ?></h2>
         <table class="form-table">

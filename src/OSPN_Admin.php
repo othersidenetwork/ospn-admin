@@ -72,7 +72,7 @@ class OSPN_Admin extends OSPN_Base
             $contact_methods['facebook'] = 'Facebook';
             $contact_methods['googleplus'] = 'Google +';
             $contact_methods['diaspora'] = 'Diaspora*';
-            $contact_methods['gnusocials'] = 'GNU Social';
+            $contact_methods['gnusocial'] = 'GNU Social';
             return $contact_methods;
         });
         add_filter('query_vars', function($vars) {
@@ -124,9 +124,7 @@ class OSPN_Admin extends OSPN_Base
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta(OSPN_Update_Queries::podcasts());
             dbDelta(OSPN_Update_Queries::podcast_hosts());
-            dbDelta(OSPN_Update_Queries::socials());
-            dbDelta(OSPN_Update_Queries::podcast_socials());
-            OSPN_Update_Queries::update_data();
+            dbDelta(OSPN_Update_Queries::podcast_meta());
             update_option("ospn_admin_db_version", $this->db_version);
         }
 

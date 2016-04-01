@@ -8,6 +8,7 @@
 
 namespace OSPN;
 
+use OSPN\tags\OSPN_Contact;
 use OSPN\Tags\OSPN_Host;
 use OSPN\Tags\OSPN_Podcast;
 
@@ -79,6 +80,14 @@ TAG
         );
 
         $podcast = new OSPN_Podcast($results[0]);
+        $podcast->contacts = array();
+        foreach(wp_get_user_contact_methods() as $meta_key => $value) {
+            $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_meta WHERE podcast_id = %d AND meta_key = %s", $podcast->blog_id, $meta_key));
+            if (is_object($row) && $row->meta_value != '') {
+                $podcast->contacts[] = new OSPN_Contact($meta_key, $row->meta_value);
+            }
+        }
+        $podcast->contact_index = 0;
         $this->index = $this->index + 1;
         return $podcast;
     }

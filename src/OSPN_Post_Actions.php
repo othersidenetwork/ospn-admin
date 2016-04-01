@@ -84,6 +84,23 @@ class OSPN_Post_Actions extends OSPN_Base
                 array("%d", "%d", "%d")
             );
         }
+
+        foreach (wp_get_user_contact_methods() as $meta_key => $meta_description) :
+            /** @var string $request_key */
+            $request_key = "contact_{$meta_key}";
+            /** @var string $meta_value */
+            $meta_value = $_REQUEST[$request_key];
+            /** @var string $sql */
+            $sql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_meta WHERE podcast_id = %d and meta_key = %s", $_REQUEST["blog_id"], $meta_key);
+            /** @var object $meta_entry */
+            $meta_entry = $wpdb->get_row($sql);
+            if ($meta_entry == '') {
+                $wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->base_prefix}ospn_podcast_meta (podcast_id, meta_key, meta_value) VALUES(%d, %s, %s)", $_REQUEST["blog_id"], $meta_key, $meta_value));
+            } else {
+                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->base_prefix}ospn_podcast_meta SET meta_value = %s WHERE pmeta_id = %d", $meta_value, $meta_entry->pmeta_id));
+            }
+        endforeach;
+
         if ($_REQUEST["origin"] == "admin") {
             wp_redirect(admin_url('network/admin.php') . '?page=ospn-admin-podcasts');
         } else {

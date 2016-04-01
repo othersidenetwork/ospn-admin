@@ -25,7 +25,7 @@ CREATE TABLE {$wpdb->base_prefix}ospn_podcasts (
   contact tinytext NOT NULL,
   podcast_feed tinytext NOT NULL,
   active tinyint(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY  podcasts_pk (blog_id)
+  PRIMARY KEY  (blog_id)
 ) $charset_collate;
 TAG;
         return $sql;
@@ -44,7 +44,7 @@ CREATE TABLE {$wpdb->base_prefix}ospn_podcast_hosts (
   podcast_id bigint(20) NOT NULL,
   host_id bigint(20) NOT NULL,
   sequence tinyint(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY  podcast_hosts_pk (podcast_id, host_id)
+  PRIMARY KEY  (podcast_id,host_id)
 ) $charset_collate;
 TAG;
         return $sql;
@@ -59,7 +59,7 @@ CREATE TABLE {$wpdb->base_prefix}ospn_socials (
   name tinytext NOT NULL,
   placeholder tinytext NOT NULL,
   pattern text NOT NULL,
-  PRIMARY KEY  socials_pk (ID)
+  PRIMARY KEY  (ID)
 ) $charset_collate;
 TAG;
         return $sql;
@@ -73,74 +73,25 @@ CREATE TABLE {$wpdb->base_prefix}ospn_podcast_socials (
   ID bigint(20) NOT NULL AUTO_INCREMENT,
   socials_id bigint(20),
   value longtext,
-  PRIMARY KEY  podcast_socials_pk (ID)
+  PRIMARY KEY  (ID)
 ) $charset_collate;
 TAG;
         return $sql;
     }
 
-    /**
-     *
-     */
-    public static function update_data()
-    {
-        OSPN_Update_Queries::update_type_socials();
-    }
-
-    /**
-     *
-     */
-    private function update_type_socials() {
+    public static function podcast_meta() {
         global $wpdb;
-
-        $count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->base_prefix}ospn_socials");
-        if ($count == 0) {
-            $wpdb->insert(
-                "{$wpdb->base_prefix}ospn_socials",
-                array(
-                    "name" => "Twitter username",
-                    "placeholder" => "@...",
-                    "pattern" => "^@.+$"
-                ),
-                array("%s", "%s", "%s")
-            );
-            $wpdb->insert(
-                "{$wpdb->base_prefix}ospn_socials",
-                array(
-                    "name" => "Facebook URL",
-                    "placeholder" => "https://facebook.com/...",
-                    "pattern" => '^https?://(www\\.)?facebook\\.com/.+$'
-                ),
-                array("%s", "%s", "%s")
-            );
-            $wpdb->insert(
-                "{$wpdb->base_prefix}ospn_socials",
-                array(
-                    "name" => "Google+ URL",
-                    "placeholder" => "https://plus.google.com/...",
-                    "pattern" => '^https?://plus\\.google\\.com/.+$'
-                ),
-                array("%s", "%s", "%s")
-            );
-            $wpdb->insert(
-                "{$wpdb->base_prefix}ospn_socials",
-                array(
-                    "name" => "GNU Social URL",
-                    "placeholder" => "http://...",
-                    "pattern" => '^https?://.+\\.[^\\.]+/.+$'
-                ),
-                array("%s", "%s", "%s")
-            );
-            $wpdb->insert(
-                "{$wpdb->base_prefix}ospn_socials",
-                array(
-                    "name" => "diaspora* URL",
-                    "placeholder" => "http://...",
-                    "pattern" => '^https?://.+\\.[^\\.]+/.+$'
-                ),
-                array("%s", "%s", "%s")
-            );
-        }
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = <<<TAG
+CREATE TABLE {$wpdb->base_prefix}ospn_podcast_meta (
+  pmeta_id bigint(20) NOT NULL AUTO_INCREMENT,
+  podcast_id bigint(20),
+  meta_key varchar(255),
+  meta_value longtext,
+  PRIMARY KEY  (pmeta_id)
+) $charset_collate;
+TAG;
+        return $sql;
     }
 
     public static function update_blog_names() {

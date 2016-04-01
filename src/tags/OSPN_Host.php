@@ -22,6 +22,11 @@ class OSPN_Host extends OSPN_Base
     /** @var  $podcast_index int */
     private $podcast_index;
 
+    /** @var  array $contacts */
+    private $contacts;
+    /** @var  int $contact_index */
+    public $contact_index;
+
     /**
      * OSPN_Host constructor.
      * @param $user_data \WP_User
@@ -49,6 +54,15 @@ ORDER BY
 SQL
 , $this->ID));
         $this->podcast_index = 0;
+
+        $this->contacts = array();
+        foreach(wp_get_user_contact_methods() as $meta_key => $value) {
+            $meta_value = get_user_meta($this->ID, $meta_key, true);
+            if ($meta_value != null && $meta_value != "") {
+                $this->contacts[] = new OSPN_Contact($meta_key, $meta_value);
+            }
+        }
+        $this->contact_index = 0;
     }
 
     public function the_avatar($size = 125, $echo = true) {
@@ -105,4 +119,20 @@ SQL
         return $url;
     }
 
+    /**
+     * @return bool
+     */
+    public function have_contacts() {
+        return ($this->contact_index < sizeof($this->contacts));
+    }
+
+    /**
+     * @return OSPN_Contact
+     */
+    public function the_contact() {
+        /** @var OSPN_Contact $contact */
+        $contact = $this->contacts[$this->contact_index];
+        $this->contact_index = $this->contact_index + 1;
+        return $contact;
+    }
 }
