@@ -3,7 +3,7 @@
 Plugin Name:       Other Side Podcast Network - Admin
 Plugin URI:        https://github.com/othersidenetwork/ospn-admin
 Description:       Plugin for the administrative needs of the Other Side Podcast Network
-Version:           0.3.0
+Version:           0.4.0
 Require WP:        4.4
 Require PHP:       5.3.0
 Author:            Other Side Podcast Network
@@ -39,6 +39,7 @@ if (!defined('WPINC')) {
 }
 
 require_once('vendor/autoload.php');
+
 $plugin = new OSPN_Admin();
 
 register_activation_hook(__FILE__, array($plugin, 'activate'));
@@ -49,18 +50,3 @@ wp_enqueue_style("ospn-validation", plugin_dir_url(__FILE__) . "css/style.css");
 
 $plugin->register_post_actions();
 $plugin->register_actions();
-
-/**
- * @return bool
- */
-function have_podcasts() {
-    /** @global $ospn OSPN_Plugin */
-    global $ospn;
-    return $ospn->have_podcasts();
-}
-
-function the_podcast() {
-    /** @global $ospn OSPN_Plugin */
-    global $ospn;
-    $ospn->the_podcast();
-}

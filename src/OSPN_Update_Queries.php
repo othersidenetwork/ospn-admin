@@ -60,7 +60,7 @@ CREATE TABLE {$wpdb->base_prefix}ospn_socials (
   placeholder tinytext NOT NULL,
   pattern text NOT NULL,
   PRIMARY KEY  (ID)
-) $charset_collate;
+) {$charset_collate};
 TAG;
         return $sql;
     }
@@ -74,7 +74,7 @@ CREATE TABLE {$wpdb->base_prefix}ospn_podcast_socials (
   socials_id bigint(20),
   value longtext,
   PRIMARY KEY  (ID)
-) $charset_collate;
+) {$charset_collate};
 TAG;
         return $sql;
     }
@@ -89,7 +89,25 @@ CREATE TABLE {$wpdb->base_prefix}ospn_podcast_meta (
   meta_key varchar(255),
   meta_value longtext,
   PRIMARY KEY  (pmeta_id)
-) $charset_collate;
+) {$charset_collate};
+TAG;
+        return $sql;
+    }
+
+    public static function podcast_categories() {
+        /** @global $wpdb \wpdb */
+        global $wpdb;
+
+        /** @var string $charset_collate */
+        $charset_collate = $wpdb->get_charset_collate();
+
+        /** @var string $sql */
+        $sql = <<<TAG
+CREATE TABLE {$wpdb->base_prefix}ospn_podcast_categories (
+  podcast_id bigint(20) NOT NULL,
+  category_slug varchar(64) NOT NULL,
+  UNIQUE KEY uk_cat (podcast_id,category_slug)
+) {$charset_collate};
 TAG;
         return $sql;
     }

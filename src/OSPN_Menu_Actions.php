@@ -32,21 +32,21 @@ class OSPN_Menu_Actions extends OSPN_Base
      * @param $origin string
      */
     private function fill_podcast_form($podcast, $origin) {
+        /** @global $wpdb \wpdb*/
         global $wpdb;
+
+        /** @global $plugin OSPN_Admin */
+        global $plugin;
 
         /** @global \OSPN\Form\OSPN_Podcast_Form $podcast_form */
         global $podcast_form;
 
+        /** @var string $sql */
+        $sql = $wpdb->prepare("SELECT p.* FROM {$wpdb->base_prefix}ospn_podcasts p WHERE p.blog_id = %d", $podcast);
+
         /** @var object $p */
-        $p = $wpdb->get_row(<<<TAG
-SELECT
-	p.*
-FROM
-	{$wpdb->base_prefix}ospn_podcasts p
-WHERE
-	p.blog_id = {$podcast};
-TAG
-);
+        $p = $wpdb->get_row($sql);
+
         $podcast_form = new OSPN_Podcast_Form();
         $podcast_form->blog_id = $p->blog_id;
         $podcast_form->podcast_name = $p->podcast_name;
@@ -60,28 +60,47 @@ TAG
         $podcast_form->active = $p->active;
         $podcast_form->origin = $origin;
 
+        $sql = $wpdb->prepare("SELECT h.* FROM {$wpdb->base_prefix}ospn_podcast_hosts h WHERE h.podcast_id = %d ORDER BY h.sequence ASC", $podcast);
+
         /** @var object $h */
-        $h = $wpdb->get_results(<<<TAG
-SELECT
-    h.*
-FROM
-    {$wpdb->base_prefix}ospn_podcast_hosts h
-WHERE
-    h.podcast_id = {$podcast}
-ORDER BY
-    h.sequence ASC;
-TAG
-);
+        $h = $wpdb->get_results($sql);
+
         $podcast_form->host_id = $h[0]->host_id;
         if (sizeof($h) > 1) {
             $podcast_form->host2_id = $h[1]->host_id;
         }
 
-        $metas = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_meta WHERE podcast_id = %d", $podcast_form->blog_id));
+        /** @var string $sql */
+        $sql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_meta WHERE podcast_id = %d", $podcast_form->blog_id);
+
+        /** @var array $metas */
+        $metas = $wpdb->get_results($sql);
+
+        /** @var array $contact_methods */
+        $contact_methods = wp_get_user_contact_methods();
+
+        /** @var object $meta */
         foreach($metas as $meta) {
-            /** @var string $k */
-            $k = "contact_{$meta->meta_key}";
-            $podcast_form->$k = $meta->meta_value;
+            /** @var string|null $k */
+            $k = null;
+            if (array_key_exists($meta->meta_key, $contact_methods)) {
+                $k = "contact_{$meta->meta_key}";
+            }
+
+            if ($k != null) {
+                $podcast_form->$k = $meta->meta_value;
+            }
+        }
+
+        $sql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_categories WHERE podcast_id = %d", $podcast_form->blog_id);
+
+        /** @var array $categories */
+        $categories = $wpdb->get_results($sql);
+
+        /** @var object $category */
+        foreach ($categories as $category) {
+            $k = "category_{$category->category_slug}";
+            $podcast_form->$k = true;
         }
     }
 

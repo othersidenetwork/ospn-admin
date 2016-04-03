@@ -11,11 +11,14 @@ class OSPN_Contact extends OSPN_Base
     private $type;
     /** @var  string $value */
     private $value;
+    /** @var  string $name */
+    private $name;
 
-    function __construct($type, $value)
+    function __construct($type, $value, $name)
     {
         $this->type = $type;
         $this->value = $value;
+        $this->name = $name;
     }
 
     public function the_url($echo = true) {
@@ -30,5 +33,12 @@ class OSPN_Contact extends OSPN_Base
             echo $this->type;
         }
         return $this->type;
+    }
+
+    public function the_name($echo = true) {
+        if ($echo) {
+            echo $this->name;
+        }
+        return $this->name;
     }
 }

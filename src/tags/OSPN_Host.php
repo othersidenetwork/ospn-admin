@@ -59,7 +59,7 @@ SQL
         foreach(wp_get_user_contact_methods() as $meta_key => $value) {
             $meta_value = get_user_meta($this->ID, $meta_key, true);
             if ($meta_value != null && $meta_value != "") {
-                $this->contacts[] = new OSPN_Contact($meta_key, $meta_value);
+                $this->contacts[] = new OSPN_Contact($meta_key, $meta_value, $value);
             }
         }
         $this->contact_index = 0;

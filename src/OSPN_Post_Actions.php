@@ -35,6 +35,9 @@ class OSPN_Post_Actions extends OSPN_Base
         /** @global $wpdb \wpdb */
         global $wpdb;
 
+        /** @var OSPN_Admin $plugin */
+        $plugin = OSPN_Admin::$instance;
+
         /** @var boolean $active */
         $active = array_key_exists("podcast-active", $_REQUEST) && $_REQUEST["podcast-active"] == "true";
 
@@ -88,18 +91,39 @@ class OSPN_Post_Actions extends OSPN_Base
         foreach (wp_get_user_contact_methods() as $meta_key => $meta_description) :
             /** @var string $request_key */
             $request_key = "contact_{$meta_key}";
+
             /** @var string $meta_value */
             $meta_value = $_REQUEST[$request_key];
+
             /** @var string $sql */
             $sql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_meta WHERE podcast_id = %d and meta_key = %s", $_REQUEST["blog_id"], $meta_key);
+
             /** @var object $meta_entry */
             $meta_entry = $wpdb->get_row($sql);
+
             if ($meta_entry == '') {
                 $wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->base_prefix}ospn_podcast_meta (podcast_id, meta_key, meta_value) VALUES(%d, %s, %s)", $_REQUEST["blog_id"], $meta_key, $meta_value));
             } else {
                 $wpdb->query($wpdb->prepare("UPDATE {$wpdb->base_prefix}ospn_podcast_meta SET meta_value = %s WHERE pmeta_id = %d", $meta_value, $meta_entry->pmeta_id));
             }
         endforeach;
+
+        /** @var string $sql */
+        $sql = $wpdb->prepare("DELETE FROM {$wpdb->base_prefix}ospn_podcast_categories WHERE podcast_id = %d", $_REQUEST["blog_id"]);
+        $wpdb->query($sql);
+
+        foreach ($plugin->get_categories() as $category_key => $category_value) {
+            /** @var string $request_key */
+            $request_key = "category_{$category_key}";
+
+            /** @var string $form_value */
+            $request_value = $_REQUEST[$request_key];
+
+            if ("true" == $request_value) {
+                $sql = $wpdb->prepare("INSERT INTO {$wpdb->base_prefix}ospn_podcast_categories(podcast_id, category_slug) VALUES(%d, %s)", $_REQUEST["blog_id"], $category_key);
+                $wpdb->query($sql);
+            }
+        }
 
         if ($_REQUEST["origin"] == "admin") {
             wp_redirect(admin_url('network/admin.php') . '?page=ospn-admin-podcasts');

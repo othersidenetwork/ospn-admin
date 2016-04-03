@@ -19,7 +19,10 @@ class OSPN_Admin extends OSPN_Base
     private $post_actions;
 
     /** @var string $db_version */
-    private $db_version = '0.3.0';
+    private $db_version = '0.4.0';
+
+    /** @var OSPN_Admin $instance */
+    public static $instance;
 
     /**
      * OSPN_Admin constructor.
@@ -28,6 +31,7 @@ class OSPN_Admin extends OSPN_Base
     {
         $this->menu_actions = new OSPN_Menu_Actions();
         $this->post_actions = new OSPN_Post_Actions();
+        OSPN_Admin::$instance = $this;
     }
 
     /**
@@ -65,8 +69,8 @@ class OSPN_Admin extends OSPN_Base
      *
      */
     public function init() {
-        add_rewrite_endpoint('podcasts', EP_ROOT);
-        add_rewrite_endpoint('hosts', EP_ROOT);
+        /** @var OSPN_Admin $admin */
+        $admin = $this;
         add_filter('user_contactmethods', function($contact_methods) {
             $contact_methods['twitter'] = 'Twitter';
             $contact_methods['facebook'] = 'Facebook';
@@ -75,6 +79,8 @@ class OSPN_Admin extends OSPN_Base
             $contact_methods['gnusocial'] = 'GNU Social';
             return $contact_methods;
         });
+        add_rewrite_endpoint('podcasts', EP_ROOT);
+        add_rewrite_endpoint('hosts', EP_ROOT);
         add_filter('query_vars', function($vars) {
             if (!array_key_exists("podcasts", $vars)) {
                 $vars[] = 'podcasts';
@@ -84,12 +90,15 @@ class OSPN_Admin extends OSPN_Base
             };
             return $vars;
         });
-        add_filter('request', function($vars) {
+        add_filter('request', function($vars) use($admin) {
             if ($vars != null && is_array($vars) && array_key_exists("podcasts", $vars) && "" == $vars["podcasts"]) {
                 $vars["podcasts"] = "all";
             }
             if ($vars != null && is_array($vars) && array_key_exists("hosts", $vars) && "" == $vars["hosts"]) {
                 $vars["hosts"] = "all";
+            }
+            if ($vars["podcasts"] == "json") {
+                $admin->json_podcasts();
             }
             return $vars;
         });
@@ -125,6 +134,7 @@ class OSPN_Admin extends OSPN_Base
             dbDelta(OSPN_Update_Queries::podcasts());
             dbDelta(OSPN_Update_Queries::podcast_hosts());
             dbDelta(OSPN_Update_Queries::podcast_meta());
+            dbDelta(OSPN_Update_Queries::podcast_categories());
             update_option("ospn_admin_db_version", $this->db_version);
         }
 
@@ -177,5 +187,88 @@ class OSPN_Admin extends OSPN_Base
         ob_start();
         include (dirname(dirname(__FILE__)) . '/views/' . $view);
         echo ob_get_clean();
+    }
+
+    /**
+     * @return array
+     */
+    public function get_categories() {
+        return array(
+            "discussion" => __("Discussion"),
+            "music" => __("Music"),
+            "technology" => __("Technology")
+        );
+    }
+
+    /**
+     *
+     */
+    public function json_podcasts() {
+        /** @global $wpdb \wpdb */
+        global $wpdb;
+
+        /** @var array $podcasts */
+        $podcasts = array();
+
+        /** @var array $categories */
+        $categories = array();
+
+        /** @var string $sql */
+        $sql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcasts WHERE active = %d", true);
+
+        /** @var array $results */
+        $results = $wpdb->get_results($sql);
+
+        /** @var object $result */
+        foreach($results as $result) {
+            $podcasts[$result->podcast_slug] = array(
+                "name" => $result->podcast_name,
+                "url" => $result->website
+            );
+
+            /** @var string $subsql */
+            $subsql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_categories WHERE podcast_id = %d", $result->blog_id);
+
+            /** @var array $subresults */
+            $subresults = $wpdb->get_results($subsql);
+
+            /** @var object $subresult */
+            foreach($subresults as $subresult) {
+                if (!array_key_exists($subresult->category_slug, $categories)) {
+                    $categories[$subresult->category_slug] = array();
+                }
+                if (!array_key_exists($result->podcast_slug, $categories[$subresult->category_slug])) {
+                    $categories[$subresult->category_slug][$result->podcast_slug] = $result->podcast_name;
+                }
+            }
+        }
+
+        $cat = array();
+        $c = $this->get_categories();
+
+        foreach($categories as $category_slug => $podcasts_of_category) {
+            /** @var object $a */
+            /** @var object $b */
+            uasort($podcasts_of_category, function($podcast_name_a, $podcast_name_b) {
+                return strcmp($podcast_name_a, $podcast_name_b);
+            });
+
+            $cat[] = array(
+                "name" => $c[$category_slug],
+                "podcasts" => array_keys($podcasts_of_category)
+            );
+        }
+
+        usort($cat, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        /** @var array $response */
+        $response = array(
+            "podcasts" => $podcasts,
+            "categories" => $cat
+        );
+
+        wp_send_json($response);
     }
 }

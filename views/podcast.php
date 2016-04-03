@@ -107,6 +107,15 @@ global $podcast_form;
             </tr>
             <?php endforeach; ?>
         </table>
+        <h2><?php _e("Categories"); ?></h2>
+        <table class="form-table">
+            <?php foreach ($this->get_categories() as $key => $value): $k = "category_{$key}"; ?>
+            <tr>
+                <th><?php echo $value; ?></th>
+                <td><!--label for="<?php echo $key; ?>"--><input name="category_<?php echo $key; ?>" type="checkbox" id="category_<?php echo $key; ?>" value="true"<?php if (true == $podcast_form->$k) echo ' checked="checked"'; ?>/><!--?php echo $value; ?--><!--/label--></td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
         <?php if ($podcast_form->origin == "admin"): ?>
         <h2><?php _e('Administrative informations'); ?></h2>
         <table class="form-table">
