@@ -6,15 +6,21 @@ use WP_List_Table;
 
 /**
  * Class OSPN_Podcasts_Table
+ *
+ * This class represents the podcasts' table, as displayed on the network's admin page.
+ *
  * @package OSPN\Table
  */
 class OSPN_Podcasts_Table extends WP_List_Table
 {
     /**
+     * Get the columns to be displayed.
+     *
      * @return array
      */
     function get_columns()
     {
+        /** @var array $columns */
         $columns = array(
             'cb' => '<input type="checkbox" />',
             'name' => __('Name'),
@@ -27,12 +33,16 @@ class OSPN_Podcasts_Table extends WP_List_Table
     }
 
     /**
+     * Gets the collection of podcasts to be displayed in the table.
      *
+     * @return void
      */
     function prepare_items()
     {
+        /** @global $wpdb \wpdb */
         global $wpdb;
 
+        /** @var string $sql */
         $sql = <<<TAG
 SELECT
     b.blog_id,
@@ -51,11 +61,22 @@ ORDER BY
 	p.podcast_name ASC,
 	b.domain ASC
 TAG;
+
+        /** @var array $results */
         $results = $wpdb->get_results($sql);
+
+        /** @var int $per_page */
         $per_page = 10;
+
+        /** @var int $current_page */
         $current_page = $this->get_pagenum();
+
+        /** @var int $total_items */
         $total_items = count($results);
+
+        /** @var array $found_data */
         $found_data = array_slice($results, (($current_page - 1) * $per_page), $per_page);
+
         $this->set_pagination_args(array(
             'total_items' => $total_items,
             'per_page' => $per_page
@@ -65,6 +86,8 @@ TAG;
     }
 
     /**
+     * Generic function to get a column's value if no "column_<column_name>" exists.
+     *
      * @param object $item
      * @param string $column_name
      * @return mixed
@@ -86,6 +109,8 @@ TAG;
     }
 
     /**
+     * Get the "checkbox" column's content.
+     *
      * @param object $item
      * @return string
      */
@@ -95,37 +120,30 @@ TAG;
     }
 
     /**
+     * Get the "name" column's content.
+     *
      * @param $item
      * @return string
      */
     function column_name($item) {
+        /** @var array $actions */
         $actions = array(
-            'edit'   => sprintf('<a href="?page=ospn-admin-podcast-edit&podcast=%d">' . __('Edit') . '</a>', $item->blog_id),
-            /*'delete' => sprintf('<a href="?page=%s&action=%s&member=%s">' . __('Delete') . '</a>', $_REQUEST['page'], 'delete', $item->blog_id),*/
+            'edit'   => sprintf('<a href="?page=ospn-admin-podcast-edit&podcast=%d">' . __('Edit') . '</a>', $item->blog_id)
         );
         return sprintf('%1$s %2$s', $item->podcast_name == null ? $item->domain : $item->podcast_name, $this->row_actions($actions));
     }
 
     /**
+     * Gets the name of all sortable columns.
+     *
      * @return array
      */
     function get_sortable_columns()
     {
+        /** @var array $sortable_columns */
         $sortable_columns = array(
         );
+
         return $sortable_columns;
     }
-
-    /**
-     * @return array
-     */
-    /*
-    function get_bulk_actions()
-    {
-        $actions = array(
-            'delete' => __('Delete')
-        );
-        return $actions;
-    }
-    */
 }

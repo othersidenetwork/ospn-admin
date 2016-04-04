@@ -12,6 +12,9 @@ use OSPN\OSPN_Update_Queries;
  */
 class OSPN_Admin extends OSPN_Base
 {
+    const PODCASTS_ENDPOINT = "shows";
+    const HOSTS_ENDPOINT = "hosts";
+
     /** @var \OSPN\OSPN_Menu_Actions $menu_actions */
     private $menu_actions;
 
@@ -62,7 +65,7 @@ class OSPN_Admin extends OSPN_Base
      *
      */
     public function deactivate() {
-        // Not implemented
+        flush_rewrite_rules();
     }
 
     /**
@@ -79,25 +82,25 @@ class OSPN_Admin extends OSPN_Base
             $contact_methods['gnusocial'] = 'GNU Social';
             return $contact_methods;
         });
-        add_rewrite_endpoint('podcasts', EP_ROOT);
-        add_rewrite_endpoint('hosts', EP_ROOT);
+        add_rewrite_endpoint(OSPN_Admin::PODCASTS_ENDPOINT, EP_ROOT);
+        add_rewrite_endpoint(OSPN_Admin::HOSTS_ENDPOINT, EP_ROOT);
         add_filter('query_vars', function($vars) {
-            if (!array_key_exists("podcasts", $vars)) {
-                $vars[] = 'podcasts';
+            if (!array_key_exists(OSPN_Admin::PODCASTS_ENDPOINT, $vars)) {
+                $vars[] = OSPN_Admin::PODCASTS_ENDPOINT;
             }
-            if (!array_key_exists("hosts", $vars)) {
-                $vars[] = 'hosts';
+            if (!array_key_exists(OSPN_Admin::HOSTS_ENDPOINT, $vars)) {
+                $vars[] = OSPN_Admin::HOSTS_ENDPOINT;
             };
             return $vars;
         });
         add_filter('request', function($vars) use($admin) {
-            if ($vars != null && is_array($vars) && array_key_exists("podcasts", $vars) && "" == $vars["podcasts"]) {
-                $vars["podcasts"] = "all";
+            if ($vars != null && is_array($vars) && array_key_exists(OSPN_Admin::PODCASTS_ENDPOINT, $vars) && "" == $vars[OSPN_Admin::PODCASTS_ENDPOINT]) {
+                $vars[OSPN_Admin::PODCASTS_ENDPOINT] = "all";
             }
-            if ($vars != null && is_array($vars) && array_key_exists("hosts", $vars) && "" == $vars["hosts"]) {
-                $vars["hosts"] = "all";
+            if ($vars != null && is_array($vars) && array_key_exists(OSPN_Admin::HOSTS_ENDPOINT, $vars) && "" == $vars[OSPN_Admin::HOSTS_ENDPOINT]) {
+                $vars[OSPN_Admin::HOSTS_ENDPOINT] = "all";
             }
-            if ($vars["podcasts"] == "json") {
+            if ($vars[OSPN_Admin::PODCASTS_ENDPOINT] == "json") {
                 $admin->json_podcasts();
             }
             return $vars;
@@ -106,14 +109,14 @@ class OSPN_Admin extends OSPN_Base
             /** @global $ospn OSPN_Plugin */
             global $ospn;
             /** @var string $podcasts */
-            $podcasts = get_query_var("podcasts");
+            $podcasts = get_query_var(OSPN_Admin::PODCASTS_ENDPOINT);
             if ($podcasts != null && $podcasts != "") {
                 $ospn = new OSPN_Plugin($podcasts);
                 /** @var string $podcast_template */
                 $podcast_template = locate_template(array("podcast-{$podcasts}.php", "podcast.php"));
                 return $podcast_template;
             }
-            $hosts = get_query_var("hosts");
+            $hosts = get_query_var(OSPN_Admin::HOSTS_ENDPOINT);
             if ($hosts != null && $hosts != "") {
                 $ospn = new OSPN_Plugin(null, $hosts);
                 $hosts_template = locate_template(array("hosts.php"));

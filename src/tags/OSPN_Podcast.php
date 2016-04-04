@@ -9,6 +9,7 @@
 namespace OSPN\Tags;
 
 
+use OSPN\OSPN_Admin;
 use OSPN\OSPN_Base;
 
 class OSPN_Podcast extends OSPN_Base
@@ -49,12 +50,19 @@ class OSPN_Podcast extends OSPN_Base
         /** @global $wpdb \wpdb */
         global $wpdb;
 
+        /** @var array $properties */
         $properties = array("blog_id", "podcast_name", "podcast_slug", "website", "contact", "podcast_feed", "active", "tagline", "logo", "description");
+
         foreach ($properties as $property) {
             $this->$property = $info->$property;
         }
 
-        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_hosts WHERE podcast_id = %d ORDER BY sequence ASC", $this->blog_id));
+        /** @var string $sql */
+        $sql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_hosts WHERE podcast_id = %d ORDER BY sequence ASC", $this->blog_id);
+
+        /** @var array $results */
+        $results = $wpdb->get_results($sql);
+
         $this->hosts = $results;
         $this->host_index = 0;
     }
@@ -126,15 +134,21 @@ class OSPN_Podcast extends OSPN_Base
      * @return bool
      */
     public function have_hosts() {
-        return ($this->host_index < sizeof($this->hosts));
+        /** @var bool $result */
+        $result = $this->host_index < sizeof($this->hosts);
+
+        return $result;
     }
 
     /**
      * @return OSPN_Host
      */
     public function the_host() {
+        /** @var OSPN_Host $host */
         $host = new OSPN_Host(get_userdata($this->hosts[$this->host_index]->host_id));
+
         $this->host_index = $this->host_index + 1;
+
         return $host;
     }
 
@@ -145,7 +159,7 @@ class OSPN_Podcast extends OSPN_Base
     public function the_permalink($echo = true)
     {
         /** @var string $permalink */
-        $permalink = get_home_url(null, "/podcasts/{$this->podcast_slug}");
+        $permalink = get_home_url(null, "/" . OSPN_Admin::PODCASTS_ENDPOINT . "/{$this->podcast_slug}");
         if ($echo) {
             echo $permalink;
         }
