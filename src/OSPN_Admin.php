@@ -22,7 +22,7 @@ class OSPN_Admin extends OSPN_Base
     private $post_actions;
 
     /** @var string $db_version */
-    private $db_version = '0.4.0';
+    private $db_version = '0.5.0';
 
     /** @var OSPN_Admin $instance */
     public static $instance;

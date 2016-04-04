@@ -3,7 +3,7 @@
 Plugin Name:       Other Side Podcast Network - Admin
 Plugin URI:        https://github.com/othersidenetwork/ospn-admin
 Description:       Plugin for the administrative needs of the Other Side Podcast Network
-Version:           0.4.0
+Version:           0.5.0
 Require WP:        4.4
 Require PHP:       5.3.0
 Author:            Other Side Podcast Network
