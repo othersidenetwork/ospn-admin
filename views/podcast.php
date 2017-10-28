@@ -124,7 +124,7 @@ global $podcast_form;
 			<?php endforeach; ?>
 		</table>
 		<?php if ($podcast_form->origin == "admin"): ?>
-		<h2><?php _e('Administrative informations'); ?></h2>
+		<h2><?php _e('Administrative information'); ?></h2>
 		<table class="form-table">
 			<tr class="podcast-active-wrap">
 				<th><?php _e('Active') ?></th>
