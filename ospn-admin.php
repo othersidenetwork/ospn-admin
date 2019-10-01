@@ -40,6 +40,8 @@ if (!defined('WPINC')) {
 
 require_once('vendor/autoload.php');
 
+global $plugin;
+
 $plugin = new OSPN_Admin();
 
 register_activation_hook(__FILE__, array($plugin, 'activate'));

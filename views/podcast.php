@@ -9,6 +9,7 @@ if (!current_user_can('manage_options')) {
 }
 
 use OSPN\Form\OSPN_Podcast_Form;
+use OSPN\OSPN_Admin;
 
 /**
  * @global OSPN_Podcast_Form $podcast_form
@@ -57,13 +58,17 @@ global $podcast_form;
 			<?php if ($podcast_form->hosts != null) : ?>
 			<?php foreach ($podcast_form->hosts as $host): ?>
 				<tr class="podcast-host-wrap">
-					<th><label for="podcast-host-<?php echo $i; ?>"><?php _e('Host') ?></label></th>
+					<th><label for="podcast-host-<?php echo $i; ?>"><?php _e('Team member') ?></label></th>
 					<td>
 						<?php wp_dropdown_users(array(
 							"name" => "podcast-host-{$i}",
 							"show_option_none" => __("None"),
 							"selected" => $podcast_form->hosts[$i]->host_id,
 							"blog_id" => $podcast_form->blog_id
+						)); ?>
+						<?php $podcast_form->dropdown_roles(array(
+							"name" => "podcast-role-{$i}",
+							"selected" => $podcast_form->hosts[$i]->role,
 						)); ?>
 					</td>
 				</tr>
@@ -72,12 +77,16 @@ global $podcast_form;
 			<?php endif; ?>
 
 			<tr class="podcast-host-wrap">
-				<th><label for="podcast-host-<?php echo $i; ?>"><?php _e('Host') ?></label></th>
+				<th><label for="podcast-host-<?php echo $i; ?>"><?php _e('Team member') ?></label></th>
 				<td>
 					<?php wp_dropdown_users(array(
 						"name" => "podcast-host-{$i}",
 						"show_option_none" => __("None"),
 						"blog_id" => $podcast_form->blog_id
+					)); ?>
+					<?php $podcast_form->dropdown_roles(array(
+						"name" => "podcast-role-{$i}",
+						"selected" => 1,
 					)); ?>
 				</td>
 			</tr>
