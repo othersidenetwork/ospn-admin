@@ -54,6 +54,7 @@ global $podcast_form;
 			</tr>
 
 			<?php $i = 0; ?>
+			<?php if ($podcast_form->hosts != null) : ?>
 			<?php foreach ($podcast_form->hosts as $host): ?>
 				<tr class="podcast-host-wrap">
 					<th><label for="podcast-host-<?php echo $i; ?>"><?php _e('Host') ?></label></th>
@@ -68,6 +69,7 @@ global $podcast_form;
 				</tr>
 				<?php $i += 1; ?>
 			<?php endforeach; ?>
+			<?php endif; ?>
 
 			<tr class="podcast-host-wrap">
 				<th><label for="podcast-host-<?php echo $i; ?>"><?php _e('Host') ?></label></th>
@@ -110,7 +112,7 @@ global $podcast_form;
 			<?php foreach(wp_get_user_contact_methods() as $key => $value): $k = "contact_{$key}"; ?>
 			<tr>
 				<th><label for="<?php echo $k; ?>"><?php echo $value; ?></label></th>
-				<td><input type="text" name="<?php echo $k; ?>" id="<?php echo $k; ?>" value="<?php echo $podcast_form->$k; ?>" class="regular-text"></td>
+				<td><input type="text" name="<?php echo $k; ?>" id="<?php echo $k; ?>" value="<?php echo !property_exists($podcast_form, $k) ? "" : $podcast_form->$k; ?>" class="regular-text"></td>
 			</tr>
 			<?php endforeach; ?>
 		</table>
@@ -119,7 +121,7 @@ global $podcast_form;
 			<?php foreach ($this->get_categories() as $key => $value): $k = "category_{$key}"; ?>
 			<tr>
 				<th><?php echo $value; ?></th>
-				<td><!--label for="<?php echo $key; ?>"--><input name="category_<?php echo $key; ?>" type="checkbox" id="category_<?php echo $key; ?>" value="true"<?php if (true == $podcast_form->$k) echo ' checked="checked"'; ?>/><!--?php echo $value; ?--><!--/label--></td>
+				<td><!--label for="<?php echo $key; ?>"--><input name="category_<?php echo $key; ?>" type="checkbox" id="category_<?php echo $key; ?>" value="true"<?php if (property_exists($podcast_form, $k) && (true == $podcast_form->$k)) echo ' checked="checked"'; ?>/><!--?php echo $value; ?--><!--/label--></td>
 			</tr>
 			<?php endforeach; ?>
 		</table>

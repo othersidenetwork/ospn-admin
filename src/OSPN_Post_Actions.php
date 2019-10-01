@@ -112,12 +112,14 @@ class OSPN_Post_Actions extends OSPN_Base
 			/** @var string $request_key */
 			$request_key = "category_{$category_key}";
 
-			/** @var string $form_value */
-			$request_value = $_REQUEST[$request_key];
+			if (array_key_exists($request_key, $_REQUEST)) {
+				/** @var string $form_value */
+				$request_value = $_REQUEST[$request_key];
 
-			if ("true" == $request_value) {
-				$sql = $wpdb->prepare("INSERT INTO {$wpdb->base_prefix}ospn_podcast_categories(podcast_id, category_slug) VALUES(%d, %s)", $_REQUEST["blog_id"], $category_key);
-				$wpdb->query($sql);
+				if ("true" == $request_value) {
+					$sql = $wpdb->prepare("INSERT INTO {$wpdb->base_prefix}ospn_podcast_categories(podcast_id, category_slug) VALUES(%d, %s)", $_REQUEST["blog_id"], $category_key);
+					$wpdb->query($sql);
+				}
 			}
 		}
 

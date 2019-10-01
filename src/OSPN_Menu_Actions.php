@@ -64,14 +64,15 @@ class OSPN_Menu_Actions extends OSPN_Base
 
 		/** @var object $h */
 		$h = $wpdb->get_results($sql);
+		if (sizeof($h) > 0) {
+			$podcast_form->hosts = $h;
 
-		$podcast_form->hosts = $h;
-
-		$podcast_form->host_id = $h[0]->host_id;
-		if (sizeof($h) > 1) {
-			$podcast_form->host2_id = $h[1]->host_id;
+			$podcast_form->host_id = $h[0]->host_id;
+			if (sizeof($h) > 1) {
+				$podcast_form->host2_id = $h[1]->host_id;
+			}
 		}
-
+		
 		/** @var string $sql */
 		$sql = $wpdb->prepare("SELECT * FROM {$wpdb->base_prefix}ospn_podcast_meta WHERE podcast_id = %d", $podcast_form->blog_id);
 
