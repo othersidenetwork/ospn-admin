@@ -60,6 +60,10 @@ class OSPN_Menu_Actions extends OSPN_Base
 		$podcast_form->active = $p->active;
 		$podcast_form->origin = $origin;
 
+		$sql = "SELECT r.* FROM {$wpdb->base_prefix}ospn_podcast_roles r ORDER BY r.role_id ASC";
+		$podcast_form->roles = $wpdb->get_results($sql);
+
+
 		$sql = $wpdb->prepare("SELECT h.* FROM {$wpdb->base_prefix}ospn_podcast_hosts h WHERE h.podcast_id = %d ORDER BY h.sequence ASC", $podcast);
 
 		/** @var object $h */

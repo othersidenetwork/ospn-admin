@@ -22,7 +22,7 @@ class OSPN_Admin extends OSPN_Base
     private $post_actions;
 
     /** @var string $db_version */
-    private $db_version = '0.5.0';
+    private $db_version = '0.5.1';
 
     /** @var OSPN_Admin $instance */
     public static $instance;
@@ -138,6 +138,7 @@ class OSPN_Admin extends OSPN_Base
             dbDelta(OSPN_Update_Queries::podcast_hosts());
             dbDelta(OSPN_Update_Queries::podcast_meta());
             dbDelta(OSPN_Update_Queries::podcast_categories());
+            dbDelta(OSPN_Update_Queries::podcast_roles());
             update_option("ospn_admin_db_version", $this->db_version);
         }
 

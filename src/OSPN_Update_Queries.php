@@ -38,13 +38,21 @@ TAG;
         global $wpdb;
         /** @var string $charset_collate */
         $charset_collate = $wpdb->get_charset_collate();
+
+        /** @var string $table */
+        $table = $wpdb->base_prefix . "ospn_podcast_hosts";
+        if ($wpdb->get_var("SHOW TABLES LIKE {$table}" == "{$table}")) {
+            $wpdb->query("ALTER TABLE {$table} DROP PRIMARY KEY");
+        }        
+
         /** @var string $sql */
         $sql = <<<TAG
-CREATE TABLE {$wpdb->base_prefix}ospn_podcast_hosts (
+CREATE TABLE {$table} (
   podcast_id bigint(20) NOT NULL,
   host_id bigint(20) NOT NULL,
   sequence tinyint(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY  (podcast_id,host_id)
+  role bigint(20) NOT NULL DEFAULT 1,
+  PRIMARY KEY  (podcast_id,host_id,role)
 ) $charset_collate;
 TAG;
         return $sql;
@@ -110,6 +118,39 @@ CREATE TABLE {$wpdb->base_prefix}ospn_podcast_categories (
 ) {$charset_collate};
 TAG;
         return $sql;
+    }
+
+    public static function podcast_roles() {
+        /** @global $wpdb \wpdb */
+        global $wpdb;
+
+        /** @var string $charset_collate */
+        $charset_collate = $wpdb->get_charset_collate();
+
+        /** @var array $queries */
+        $queries = [];
+
+        $queries[] = <<<TAG
+CREATE TABLE {$wpdb->base_prefix}ospn_podcast_roles (
+  role_id bigint(20) NOT NULL,
+  role_name varchar(32) NOT NULL,
+  PRIMARY KEY  (role_id)
+) {$charset_collate};
+TAG;
+
+        $queries[] = <<<TAG
+INSERT INTO {$wpdb->base_prefix}ospn_podcast_roles(role_id, role_name) VALUES(1, "Host");
+TAG;
+
+$queries[] = <<<TAG
+INSERT INTO {$wpdb->base_prefix}ospn_podcast_roles(role_id, role_name) VALUES(2, "Producer");
+TAG;
+
+$queries[] = <<<TAG
+INSERT INTO {$wpdb->base_prefix}ospn_podcast_roles(role_id, role_name) VALUES(3, "Contributor");
+TAG;
+
+        return $queries;
     }
 
     public static function update_blog_names() {

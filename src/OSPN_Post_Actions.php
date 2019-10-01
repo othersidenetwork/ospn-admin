@@ -76,9 +76,10 @@ class OSPN_Post_Actions extends OSPN_Base
 					array(
 						"podcast_id" => $_REQUEST["blog_id"],
 						"host_id" => $_REQUEST["podcast-host-{$i}"],
+						"role" => $_REQUEST["podcast-role-{$i}"],
 						"sequence" => $i
 					),
-					array("%d", "%d", "%d")
+					array("%d", "%d", "%s", "%d")
 				);
 			}
 			$i += 1;

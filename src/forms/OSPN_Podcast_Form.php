@@ -52,4 +52,18 @@ class OSPN_Podcast_Form
 
 	/** @var  string Origin of this form : 'admin' means network admin, anything else means site admin. */
 	public $origin;
+
+	/** @var  object[] Roles */
+	public $roles;
+
+    /**
+     * @param $options array
+     */
+    public function dropdown_roles($options) {
+        echo '<select name="' . $options['name'] . '" id="' . $options['name'] . '" class="">';
+        foreach ($this->roles as $role) {
+            echo '<option value="' . $role->role_id . '"' . ($options['selected'] == $role->role_id ? 'selected="selected"' : '') . '>' . $role->role_name . '</option>';
+        }
+        echo '</select>';
+    }
 }
